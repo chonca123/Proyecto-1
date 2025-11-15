@@ -7,8 +7,8 @@ struct SistemaVotacion {
 };
 
 struct NodoElectoral {
-  struct Elecciones *Elecciones;
-  struct NodoElectoral *sig;
+    struct Elecciones *Elecciones;
+    struct NodoElectoral *sig;
 };
 
 struct Elecciones {
@@ -17,34 +17,35 @@ struct Elecciones {
 };
 
 struct TodosCandidatos {
-  struct Candidato*Candidato;
+    struct Candidato*Candidato;
 };
 
 struct Candidato{
-  int Rut[12];
-  char NombreCandidato[256];
-  
+    int Rut[12];
+    char NombreCandidato[256];
+    char Nacionalidad[25];
+    int edad[3];
+    char PartidoPolitico[50];
 }
 
 struct NodoMesa{
-  struct Mesa*Mesa;
-  struct NodoMesa*sig;
+    struct Mesa*Mesa;
+    struct NodoMesa*sig;
 };
 
 struct Mesa{
-  int Mesa;
-  char Direccion[256];
-  struct NodoVotante*votantes;  
+    int Mesa;
+    char Direccion[256];
+    struct NodoVotante*votantes;  
 };
 
  struct NodoVotante{
-  struct Votante;
-  struct nodo_imputado *izq;
-  struct nodo_imputado *der;
+    struct Votante;
+    struct nodo_imputado *izq;
+    struct nodo_imputado *der;
 };
 
 struct votante{
-  struct Candidato*Candidatos;
-
+    struct Candidato*Candidatos;
 }
   
