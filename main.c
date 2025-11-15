@@ -47,5 +47,5 @@ struct Mesa{
 
 struct votante{
     struct Candidato*Candidatos;
-}
+};
   
