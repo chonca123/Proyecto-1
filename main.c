@@ -4,6 +4,9 @@
 
 struct SistemaVotacion {
     struct NodoEleccion *Eleccionee;
+    char convocatoria[1000];
+    int FechaInicioCampana[12];
+    int FechaVotacion[12];
 };
 
 struct NodoElectoral {
@@ -26,6 +29,7 @@ struct Candidato{
     char Nacionalidad[25];
     int edad[3];
     char PartidoPolitico[50];
+    char ProgramaGobierno[1000];
 }
 
 struct NodoMesa{
@@ -34,8 +38,8 @@ struct NodoMesa{
 };
 
 struct Mesa{
-    int Mesa;
-    char Direccion[256];
+    char NombreVocales[216];
+    int PadronMesa[20];
     struct NodoVotante*votantes;  
 };
 
@@ -47,5 +51,10 @@ struct Mesa{
 
 struct votante{
     struct Candidato*Candidatos;
+    char Nombre[100];
+    int Edad[3];
+    char Nacionalidad[10];
+    int RUT[10];
+    char PadronMesa[20];
 };
   
