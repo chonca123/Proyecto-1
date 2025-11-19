@@ -3,11 +3,12 @@
 #include <string.h>
 
 struct SistemaVotacion {
-    struct NodoEleccion *Eleccionee;
-    char convocatoria[1000];
-    int FechaInicioCampana[12];
-    int FechaVotacion[12];
+    struct NodoElectoral *elecciones;
+    char convocatoria[1000];  
+    struct Fecha FechaInicioCampana;
+    struct Fecha FechaVotacion;
 };
+
 
 struct NodoElectoral {
     struct Elecciones *Elecciones;
@@ -15,6 +16,7 @@ struct NodoElectoral {
 };
 
 struct Elecciones {
+    int NunmeroVuelta[1];
     struct TodosCandidatos *Candidatos;
     struct NodoMesa *ant;
 };
@@ -30,7 +32,7 @@ struct Candidato{
     int edad[3];
     char PartidoPolitico[50];
     char ProgramaGobierno[1000];
-}
+};
 
 struct NodoMesa{
     struct Mesa*Mesa;
@@ -44,7 +46,7 @@ struct Mesa{
 };
 
  struct NodoVotante{
-    struct Votante;
+    struct Votante *votantes;
     struct nodo_imputado *izq;
     struct nodo_imputado *der;
 };
@@ -57,4 +59,59 @@ struct votante{
     int RUT[10];
     char PadronMesa[20];
 };
-  
+
+struct Fecha {
+    int dia;
+    int mes;
+    int anio;
+};
+
+
+
+//FUNCIONES SISTEMA VOTACIONES 
+struct SistemaVotacion *NuevaVotacion() {
+    struct SistemaVotacion *Nueva;
+
+    Nueva = malloc(sizeof(struct SistemaVotacion));
+    if (Nueva == NULL)
+        return NULL;
+
+    Nueva->elecciones = NULL;
+
+    Nueva->convocatoria[0] = '\0';
+
+    Nueva->FechaInicioCampana.dia = 0;
+    Nueva->FechaInicioCampana.mes = 0;
+    Nueva->FechaInicioCampana.anio = 0;
+
+    Nueva->FechaVotacion.dia = 0;
+    Nueva->FechaVotacion.mes = 0;
+    Nueva->FechaVotacion.anio = 0;
+
+    return Nueva;
+};
+
+void IngresarDatosVotacion(struct SistemaVotacion *sistema) {
+    printf("Ingrese mensaje de convocatoria:\n");
+    scanf(" %[^\n]", sistema->convocatoria);  
+
+    printf("Ingrese fecha inicio campaña (dia mes año): ");
+    scanf("%d %d %d", 
+        &sistema->FechaInicioCampana.dia,
+        &sistema->FechaInicioCampana.mes,
+        &sistema->FechaInicioCampana.anio
+    );
+
+    printf("Ingrese fecha de votación (dia mes año): ");
+    scanf("%d %d %d", 
+        &sistema->FechaVotacion.dia,
+        &sistema->FechaVotacion.mes,
+        &sistema->FechaVotacion.anio
+    );
+}
+
+
+
+
+
+
