@@ -209,3 +209,136 @@ struct Votante
 //el padron mesa no va, porque corresponden a todos los votantes habilitados a votar, y esto es el arbol
 //uso de char estaticos donde el tamaño varia mucho y no se conoce
 //usar strlen para calcular el tamaño exacto del ingreso dinamico al agregar, se escanenan con auxiliares antes de todo
+
+
+
+//PEQUEÑO AVANCE CON CORRECCIONES DE LO ANTERIOR
+
+
+//FUNCIONES SISTEMA VOTACIONES (inicio de valores en 0)
+struct SistemaVotacion *nuevoSistema() 
+{
+    struct SistemaVotacion *nueva;
+    
+    //el malloc esta bien porque se devuelve un *, si estuviera en el main, no seria necesario, al igual que si estuviera como * en el main, ahi tambien se usa malloc
+    //junto a su uso en los nodos
+    nueva = (struct SistemaVotacion *) malloc (sizeof(struct SistemaVotacion));
+    if (nueva == NULL) return NULL;        //por si falla, va o no va? segun yo no
+    printf("Sistema iniciado con valores en 0\n");
+    nueva->elecciones = NULL;
+    nueva->convocatoria = NULL;
+
+    nueva->registroCandidaturas.dia = 0;
+    nueva->registroCandidaturas.mes = 0;
+    nueva->registroCandidaturas.anio = 0;
+
+    nueva->FechaInicioCampana.dia = 0;
+    nueva->FechaInicioCampana.mes = 0;
+    nueva->FechaInicioCampana.anio = 0;
+
+    nueva->FechaVotacion.dia = 0;
+    nueva->FechaVotacion.mes = 0;
+    nueva->FechaVotacion.anio = 0;
+
+    return nueva;
+}
+
+void ingresoDeDatos(struct SistemaVotacion *sistema) 
+{
+    //para usarlo como auxiliar y no desperdiciar memoria cuando quede todo guardado. este auxiliar se destruye al salir de la funcion
+    char linea[200];
+    
+    printf("Ingrese el nombre de la convocatoria:\n");
+    scanf(" %[^\n]", linea);  
+    
+    sistema->convocatoria = (char *) malloc ((strlen(linea) + 1) * sizeof(char));
+    //validar??
+    strcpy(sistema->convocatoria, linea);
+    
+    printf("Ingrese fecha del registro de la candidatura (dia, mes y año)\n");
+    scanf("%d %d %d", &sistema->registroCandidaturas.dia, &sistema->registroCandidaturas.mes, &sistema->registroCandidaturas.anio);
+
+    printf("Ingrese fecha inicio campaña (dia, mes y año): \n");
+    scanf("%d %d %d", &sistema->FechaInicioCampana.dia, &sistema->FechaInicioCampana.mes, &sistema->FechaInicioCampana.anio);
+
+    printf("Ingrese fecha de votación (dia, mes y año): \n");
+    scanf("%d %d %d", &sistema->FechaVotacion.dia, &sistema->FechaVotacion.mes, &sistema->FechaVotacion.anio);
+}
+
+
+
+
+
+
+//el switch ingresa un dato ingresado por el ususario y segun lo que quiera hace la funcion que necesita
+
+int main()
+{
+    struct SistemaVotacion *sistema;
+    int numero;
+    
+    //usar while para un menu que se repite
+    //estos son los requisitos
+    //considerar que el arreglo de candidatos debe estar definido desde antes del escrutino, de modo que permita el ingreso de datos, pero luego no cambie mas (a menos que se elimine algo)
+    //para esto, se divide el menu por fases, primero todo lo que va antes de la votacion, y luego todo lo que pueda ocurrir al momento y despues
+    
+    //se crea el sistema (una sola vez), sin & al haber creado sistema como * 
+    sistema = nuevoSistema();
+    if (sistema == NULL)
+    {
+        printf("No se pudo crear el sistema");
+        return 1;
+    }
+    ingresoDeDatos(sistema);
+    
+    //se puede dejar el menu en una funcion, o dividirlo en funciones (las fases del menu)
+    printf("Bienvenido a este programa de sistema de votaciones\n");
+    printf("si la eleccion es nueva, ingrese el numero \n");
+    printf("si necesita eliminar una eleccion, ingrese el numero \n");
+    printf("si necesita buscar una eleccion, ingrese el numero \n");
+    printf("si necesita modificar una eleccion, ingrese el numero \n");
+    printf("si necesita mostrar los datos de una eleccion, ingrese el numero \n");
+    printf("si necesita agregar un candidato, ingrese el numero \n");
+    printf("si necesita eliminar un candidato, ingrese el numero \n");
+    printf("si necesita buscar un candidato, ingrese el numero \n");
+    printf("si necesita modificar un candidato, ingrese el numero \n");
+    printf("si necesita mostrar los datos de un candidato, ingrese el numero \n");
+    printf("si necesita agregar una mesa, ingrese el numero \n");
+    printf("si necesita eliminar una mesa, ingrese el numero \n");
+    printf("si necesita buscar una mesa, ingrese el numero \n");
+    printf("si necesita modificar una mesa, ingrese el numero \n");
+    printf("si necesita mostrar los datos de una mesa, ingrese el numero \n");
+    printf("si necesita agregar un votante, ingrese el numero \n");
+    printf("si necesita eliminar un votante, ingrese el numero \n");
+    printf("si necesita buscar un votante, ingrese el numero \n");
+    printf("si necesita modificar un votante, ingrese el numero \n");
+    printf("si necesita mostrar los datos de un votante, ingrese el numero \n");
+    
+    
+    //aqui van funciones con finalidad (calcular ganancia por ejemplo, minimo 2)
+    printf("");
+    printf("");
+    printf("");
+    
+    
+    scanf("%d", &numero);
+    
+    //sin el break en cada caso se ejecuta todo en orden
+    
+    switch (numero)    //aqui va lo que ingresa el ususario
+    {
+        case 1:
+            break;
+        
+        case 2:
+            break;
+        
+        case 3:
+            break;
+        
+        default:
+            break;      //no se si se puede usar
+        
+    }
+    return 0;
+}
