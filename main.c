@@ -122,7 +122,7 @@ void IngresarDatosVotacion(struct SistemaVotacion *sistema) {
 struct SistemaVotacion 
 {
     struct NodoEleccion *elecciones;
-    char   *convocatoria;            //la convocatoria tiene el nombre de lo que se va a realizar
+    char *convocatoria;            //la convocatoria tiene el nombre de lo que se va a realizar
     struct Fecha registroCandidaturas;    //se agrega la fecha del registro
     struct Fecha FechaInicioCampana;
     struct Fecha FechaVotacion;
@@ -162,7 +162,7 @@ struct Candidato
     int  edad;                  //edad es un numero
     char *PartidoPolitico;
     char *ProgramaGobierno;
-    int  delitos;                //variable para confirmar si tiene delitos o no
+    int delitos;                //variable para confirmar si tiene delitos o no
 };
 
 struct NodoMesa
@@ -206,16 +206,9 @@ struct Votante
     char paisResidencia[25];
 };
 
-//el padron mesa no va, porque corresponden a todos los votantes habilitados a votar, y esto es el arbol
-//uso de char estaticos donde el tamaño varia mucho y no se conoce
 //usar strlen para calcular el tamaño exacto del ingreso dinamico al agregar, se escanenan con auxiliares antes de todo
 
 
-
-//PEQUEÑO AVANCE CON CORRECCIONES DE LO ANTERIOR
-
-
-//FUNCIONES SISTEMA VOTACIONES (inicio de valores en 0)
 struct SistemaVotacion *nuevoSistema() 
 {
     struct SistemaVotacion *nueva;
@@ -223,7 +216,6 @@ struct SistemaVotacion *nuevoSistema()
     //el malloc esta bien porque se devuelve un *, si estuviera en el main, no seria necesario, al igual que si estuviera como * en el main, ahi tambien se usa malloc
     //junto a su uso en los nodos
     nueva = (struct SistemaVotacion *) malloc (sizeof(struct SistemaVotacion));
-    if (nueva == NULL) return NULL;        //por si falla, va o no va? segun yo no
     printf("Sistema iniciado con valores en 0\n");
     nueva->elecciones = NULL;
     nueva->convocatoria = NULL;
@@ -243,16 +235,157 @@ struct SistemaVotacion *nuevoSistema()
     return nueva;
 }
 
+//estos creados son solo modelos sobre los que yo a futuro puedo generar estructuras como las listas o los arreglos
+
+//para crear un nuevo nodo de la lista eleccion
+//retorno un puntero que apunta a ese nuevo nodo creado, por lo que despues lo puedo pasar para ingresar datos sin recorrer
+struct NodoEleccion *nuevoNodoEleccion(struct SistemaVotacion *sistema)   //no estoy modificando nada, estoy agregando
+{
+    struct NodoEleccion *nuevo;
+    
+    nuevo = (struct NodoEleccion *) malloc (sizeof(struct NodoEleccion));
+    nuevo->datosEleccion = NULL;
+    nuevo->sig = NULL;
+    return nuevo;
+}
+
+struct Eleccion *crearEleccion()
+{
+    struct Eleccion *nuevo;
+    
+    nuevo = (struct Eleccion *) malloc (sizeof(struct Eleccion));
+    nuevo->NumeroVuelta = 0;
+    nuevo->listaCandidatos = NULL;
+    nuevo->listaMesas = NULL;
+    
+    return nuevo;
+}
+
+struct TodosCandidatos *crearArregloCandidatos()
+{
+    struct TodosCandidatos *nuevo;
+    
+    nuevo = (struct TodosCandidatos *) malloc (sizeof(struct TodosCandidatos));   //creo un struct que mas adelante contendra un arreglo
+    nuevo->Candidatos = NULL;      //no tengo el arreglo todavia
+    nuevo->totalCandidatos = 0;
+    
+    return nuevo;
+}
+
+struct Candidato *crearCandidato()
+{
+    struct Candidato *nuevo;
+    
+    nuevo = (struct Candidato *) malloc (sizeof(struct Candidato));
+    
+    nuevo->NombreCandidato = NULL;
+    nuevo->edad = 0;
+    nuevo->PartidoPolitico = NULL;
+    nuevo->ProgramaGobierno = NULL;
+    nuevo->delitos = 0;
+    
+    return nuevo;
+}
+
+struct NodoMesa *crearNodoMesa()
+{
+    struct NodoMesa *nuevo;
+    
+    nuevo = (struct NodoMesa *) malloc (sizeof(struct NodoMesa));
+    nuevo->datosMesa = NULL;
+    nuevo->sig = NULL;
+    return nuevo;
+}
+
+struct Mesa *crearMesa()
+{
+    struct Mesa *nuevo;
+    
+    nuevo = (struct Mesa *) malloc (sizeof(structMesa));
+    nuevo->listaVocales = NULL;
+    nuevo->votantes = NULL;
+    return nuevo;
+}
+
+struct NodoVocal *crearNodoVocal()
+{
+    struct NodoVocal *nuevo;
+    nuevo = (struct NodoVocal *) malloc (sizeof(struct NodoVocal));
+    nuevo->datosVocal = NULL;
+    nuevo->sig = NULL;
+    return nuevo;
+}
+
+struct Vocales *crearVocal()
+{
+    struct Vocales *nuevo;
+    nuevo = (struct Vocales *) malloc (sizeof(struct Vocales));
+    nuevo->nombre = NULL;
+    nuevo->edad = 0;
+    return nuevo;
+}
+
+struct NodoVotante *nuevoNodoVotante()
+{
+    struct NodoVotante *nuevo;
+    nuevo = (struct NodoVotante *) malloc (sizeof(struct NodoVotante));
+    nuevo->datosVotante = NULL;
+    nuevo->izq = NULL;
+    nuevo->der = NULL;
+    return nuevo;
+}
+
+struct Votante *crearVotante()
+{
+    struct Votante *nuevo;
+    nuevo = (struct Votante *) malloc (sizeof(struct Votante));
+    nuevo->voto = NULL;
+    nuevo->Nombre = NULL;
+    nuevo->edad = 0;
+    return nuevo;
+}
+
+
+
+
+
+
+
+
+
+
+
+//esto va en su propia funcion para insertar elecciones
+if (sistema->elecciones == NULL)
+    {
+        sistema->elecciones = nuevo;
+    }
+    else
+    {
+        rec = sistema->elecciones;
+        while (rec->sig != NULL)     //con esto se detiene en el ultimo nodo
+        {
+            rec = rec->sig;    //va aqui, para llegar al final y luego insertarlo
+        }
+        rec->sig = nuevo;
+    }
+    return nuevo;
+
+
+
+
+
+
+//datos para el sistema
 void ingresoDeDatos(struct SistemaVotacion *sistema) 
 {
     //para usarlo como auxiliar y no desperdiciar memoria cuando quede todo guardado. este auxiliar se destruye al salir de la funcion
     char linea[200];
     
     printf("Ingrese el nombre de la convocatoria:\n");
-    scanf(" %[^\n]", linea);  
+    scanf(" %[^\n]", linea);
     
     sistema->convocatoria = (char *) malloc ((strlen(linea) + 1) * sizeof(char));
-    //validar??
     strcpy(sistema->convocatoria, linea);
     
     printf("Ingrese fecha del registro de la candidatura (dia, mes y año)\n");
@@ -266,6 +399,13 @@ void ingresoDeDatos(struct SistemaVotacion *sistema)
 }
 
 
+//al ingresar datos yo puedo decir que cree una estructura (ingreso de datos en tiempo de ejecucion)
+
+
+
+
+
+
 
 
 
@@ -275,21 +415,70 @@ void ingresoDeDatos(struct SistemaVotacion *sistema)
 int main()
 {
     struct SistemaVotacion *sistema;
+    struct NodoEleccion *nodoNuevoEleccion;   //puntero a ese nodo que voy a agregar, el creado en 0
+    struct Eleccion *nuevaEleccion;
+    struct TodosCandidatos *nuevoArreglo;
+    struct Candidato *nuevoCandidato;
+    struct nodoMesa *nuevoNodoMesa;
+    struct Mesa *nuevaMesa;
+    struct NodoVocal *nuevoNodoVocal;
+    struct Vocales *nuevoVocal;
+    struct NodoVotante *nuevoNodoVotante;
+    struct Votante *nuevoVotante;
+    
+    
+    
     int numero;
     
     //usar while para un menu que se repite
-    //estos son los requisitos
     //considerar que el arreglo de candidatos debe estar definido desde antes del escrutino, de modo que permita el ingreso de datos, pero luego no cambie mas (a menos que se elimine algo)
     //para esto, se divide el menu por fases, primero todo lo que va antes de la votacion, y luego todo lo que pueda ocurrir al momento y despues
     
-    //se crea el sistema (una sola vez), sin & al haber creado sistema como * 
+    
+    
+    //creo primero una estructura por una de forma independiente para luego unir
+    
+    
     sistema = nuevoSistema();
     if (sistema == NULL)
     {
         printf("No se pudo crear el sistema");
         return 1;
     }
-    ingresoDeDatos(sistema);
+    ingresoDeDatos(sistema);  //aqui por ejemplo hay un ingreso de datos
+    
+    
+    
+    
+    
+    
+    
+    nodoNuevoEleccion = nuevoNodoEleccion(sistema);    //primero le doy memoria con malloc y lo dejo con datos en 0 o NULL, ademas de asignarlo a la estructura
+    nuevaEleccion = crearEleccion();   //esto crea y deja los valores en 0, despues se ingresan datos
+    nuevoArreglo = crearArregloCandidatos();     //estructura que contiene un arreglo
+    nuevoCandidato = crearCandidato();
+    nuevoNodoMesa = crearNodoMesa();
+    nuevaMesa = crearMesa();
+    nuevoNodoVocal = crearNodoVocal();
+    nuevoVocal = crearVocal();
+    nuevoNodoVotante = crearNodoVotante();
+    nuevoVotante = crearVotante();
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     //se puede dejar el menu en una funcion, o dividirlo en funciones (las fases del menu)
     printf("Bienvenido a este programa de sistema de votaciones\n");
@@ -323,8 +512,6 @@ int main()
     
     scanf("%d", &numero);
     
-    //sin el break en cada caso se ejecuta todo en orden
-    
     switch (numero)    //aqui va lo que ingresa el ususario
     {
         case 1:
@@ -335,9 +522,12 @@ int main()
         
         case 3:
             break;
+            
+        case 4:
+            break;
         
         default:
-            break;      //no se si se puede usar
+            break;      //si se puede el break
         
     }
     return 0;
