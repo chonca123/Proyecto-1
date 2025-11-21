@@ -208,6 +208,7 @@ struct Votante
 
 //usar strlen para calcular el tamaño exacto del ingreso dinamico al agregar, se escanenan con auxiliares antes de todo
 
+//funciones para crear
 
 struct SistemaVotacion *nuevoSistema() 
 {
@@ -239,7 +240,7 @@ struct SistemaVotacion *nuevoSistema()
 
 //para crear un nuevo nodo de la lista eleccion
 //retorno un puntero que apunta a ese nuevo nodo creado, por lo que despues lo puedo pasar para ingresar datos sin recorrer
-struct NodoEleccion *nuevoNodoEleccion(struct SistemaVotacion *sistema)   //no estoy modificando nada, estoy agregando
+struct NodoEleccion *nuevoNodoEleccion()   //no estoy modificando nada, estoy agregando
 {
     struct NodoEleccion *nuevo;
     
@@ -347,18 +348,15 @@ struct Votante *crearVotante()
 
 
 
+//funciones para unir
 
-
-
-
-
-
-
-
-//esto va en su propia funcion para insertar elecciones
-if (sistema->elecciones == NULL)
+void agregarNodoEleccion(struct SistemaVotacion *sistema, struct NodoEleccion *nodo)
+{
+    struct NodoEleccion *rec;
+    //esto va en su propia funcion para insertar elecciones
+    if (sistema->elecciones == NULL)
     {
-        sistema->elecciones = nuevo;
+        sistema->elecciones = nodo;
     }
     else
     {
@@ -367,9 +365,95 @@ if (sistema->elecciones == NULL)
         {
             rec = rec->sig;    //va aqui, para llegar al final y luego insertarlo
         }
+        rec->sig = nodo;
+    }
+}
+
+//esta funcion valida si un candidato que se quiere ingresar cumple con los requisitos o no
+int contadorParaCandidatos()
+{
+    int edad, delito, contador = 0, bandera;
+    char nacionalidad[25];
+    
+    while (1)
+    {
+        printf("Ingrese edad del candidato");
+        scanf("%d", &edad);
+        if (edad >= 35)
+        {
+            printf("ingrese nacionalidad del candidato");
+            scanf(" %[^\n]", nacionalidad);
+            
+            if (strcmp(nacionalidad, "Chile") == 0 || strcmp(nacionalidad, "Chilena") == 0)   //y si lo ingresa con mayusculas en medio??
+            {
+                printf("Ingrese un 1 si el candidato no cuenta con antecedentes");
+                scanf("%d", &delito);
+                
+                if (delito == 1)
+                {
+                    contador += 1;
+                    printf("Su candidato ha sido aceptado");
+                }
+            }
+        }
+        printf("Su candidato no cumple con las condiciones para postularse");
+        printf("Ingrese un 0 si no desea agregar mas candidatos");
+        scanf("%d", &bandera);
+        if (bandera == 0)
+        {
+            return contador;
+        }
+    }
+}
+//previo a esto, confirmar si un candidato puede entrar o no a la lista
+void arregloFijo(struct TodosCandidatos *arreglo, int tamano)
+{
+    int i;
+    
+    arreglo->Candidatos = (struct Candidato **) malloc (tamano * sizeof(struct Candidato *));
+    arreglo->totalCandidatos = tamano;
+    
+    for (i = 0; i < tamano; i++)
+    {
+        arreglo->Candidatos[i] = crearCandidato();   //le doy espacios vacios a donde se ingresan los datos
+    }
+    
+}
+
+void ingresoDeDatosCandidatos(struct Candidato *nodo)
+{
+    
+}
+
+
+
+void agregarNodoMesa(struct Eleccion *eleccion, struct NodoMesa *nuevo)
+{
+    struct NodoMesa *rec;
+    
+    if (eleccion->listaMesas == NULL)
+    {
+        eleccion->listaMesas = nuevo;
+    }
+    else
+    {
+        rec = eleccion->listaMesas;
+        while (rec->sig != NULL)
+        {
+            rec = rec->sig;
+        }
         rec->sig = nuevo;
     }
-    return nuevo;
+}
+
+
+
+
+
+
+
+
+
 
 
 
@@ -383,7 +467,7 @@ void ingresoDeDatos(struct SistemaVotacion *sistema)
     char linea[200];
     
     printf("Ingrese el nombre de la convocatoria:\n");
-    scanf(" %[^\n]", linea);
+    scanf(" %[^\n]", linea);    //esto no compila en turbo C
     
     sistema->convocatoria = (char *) malloc ((strlen(linea) + 1) * sizeof(char));
     strcpy(sistema->convocatoria, linea);
@@ -409,7 +493,6 @@ void ingresoDeDatos(struct SistemaVotacion *sistema)
 
 
 
-
 //el switch ingresa un dato ingresado por el ususario y segun lo que quiera hace la funcion que necesita
 
 int main()
@@ -418,7 +501,6 @@ int main()
     struct NodoEleccion *nodoNuevoEleccion;   //puntero a ese nodo que voy a agregar, el creado en 0
     struct Eleccion *nuevaEleccion;
     struct TodosCandidatos *nuevoArreglo;
-    struct Candidato *nuevoCandidato;
     struct nodoMesa *nuevoNodoMesa;
     struct Mesa *nuevaMesa;
     struct NodoVocal *nuevoNodoVocal;
@@ -428,7 +510,7 @@ int main()
     
     
     
-    int numero;
+    int numero, contadorParaCandidatos, i;
     
     //usar while para un menu que se repite
     //considerar que el arreglo de candidatos debe estar definido desde antes del escrutino, de modo que permita el ingreso de datos, pero luego no cambie mas (a menos que se elimine algo)
@@ -436,47 +518,22 @@ int main()
     
     
     
-    //creo primero una estructura por una de forma independiente para luego unir
+    //creo primero una estructura por una de forma independiente para luego unir en tiempo de ejecucion a medida que el usuario ingrese informacion
     
-    
+    printf("Bienvenido al sistema de votaciones de SERVEL\n");
+    printf("Para comenzar, ingrese los siguentes datos que identifiquen al sistema");
     sistema = nuevoSistema();
     if (sistema == NULL)
     {
         printf("No se pudo crear el sistema");
         return 1;
     }
-    ingresoDeDatos(sistema);  //aqui por ejemplo hay un ingreso de datos
+    ingresoDeDatos(sistema);  //aqui por ejemplo hay un ingreso de datos (del sistema general asi que se hace una sola vez, iniciado el sistema, solo este caso)
+
+    //posteriormente ingreso datos (solicitar al ususario)
     
     
-    
-    
-    
-    
-    
-    nodoNuevoEleccion = nuevoNodoEleccion(sistema);    //primero le doy memoria con malloc y lo dejo con datos en 0 o NULL, ademas de asignarlo a la estructura
-    nuevaEleccion = crearEleccion();   //esto crea y deja los valores en 0, despues se ingresan datos
-    nuevoArreglo = crearArregloCandidatos();     //estructura que contiene un arreglo
-    nuevoCandidato = crearCandidato();
-    nuevoNodoMesa = crearNodoMesa();
-    nuevaMesa = crearMesa();
-    nuevoNodoVocal = crearNodoVocal();
-    nuevoVocal = crearVocal();
-    nuevoNodoVotante = crearNodoVotante();
-    nuevoVotante = crearVotante();
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    //para luego insertar esa nueva informacion en lo que tengo (agregar un nuevo nodo a una lista, al arbol, ...)
     
     
     
@@ -509,26 +566,63 @@ int main()
     printf("");
     printf("");
     
-    
-    scanf("%d", &numero);
-    
-    switch (numero)    //aqui va lo que ingresa el ususario
+    while (1)
     {
-        case 1:
-            break;
-        
-        case 2:
-            break;
-        
-        case 3:
-            break;
+        //pedir datos en medio
+        scanf("%d", &numero);
+        switch (numero)    //aqui va lo que ingresa el ususario
+        {
+            case 1:
+                nodoNuevoEleccion = nuevoNodoEleccion();    //primero le doy memoria con malloc y lo dejo con datos en 0 o NULL, ademas de asignarlo a la estructura
+                nuevaEleccion = crearEleccion();   //esto crea y deja los valores en 0, despues se ingresan datos
+                nodoNuevoEleccion->datosEleccion = nuevaEleccion;
+                agregarNodoEleccion(sistema, nodoNuevoEleccion);    //considerar primer caso y los siguentes, porque se une en tiempo de ejecucion, no en una estructura base
+                //pasa unir al sistema en caso de no haber nada o agregar a la lista existente
+                break;
+                
+            case 2:
+                if (nuevaEleccion == NULL)
+                {
+                    printf("se debe crear primero el case 1");
+                }
+                nuevoArreglo = crearArregloCandidatos();     //estructura que contiene los datos vacios
+                nuevaEleccion->listaCandidatos = nuevoArreglo;
+                //para confirmar si el candidato cumple con los requisitos o no
+                contadorParaCandidatos = contarCuantosSeran();
+                if (contadorParaCandidatos > 0)
+                {
+                    //se generan los candidatos que componen el arreglo, junto al tamaño del arreglo en si, porque el modelo se genero antes en crearArreglo
+                    arregloFijo(nuevaEleccion->listaCandidatos, contadorParaCandidatos);
+                    
+                    for (i = 0; i < contadorParaCandidatos; i++)
+                    {
+                        ingresoDeDatosCandidatos(nuevoArreglo->Candidatos[i]);
+                    }
+                }
+                break;
+                
+            case 3:
+                nuevoNodoMesa = crearNodoMesa();
+                nuevaMesa = crearMesa();
+                nuevoNodoMesa->datosMesa = nuevaMesa;
+                agregarNodoMesa(eleccion, nuevoNodoMesa);
+                break;
+                
+            case 4:
+                nuevoNodoVocal = crearNodoVocal();
+                nuevoVocal = crearVocal();
+                break;
             
-        case 4:
-            break;
-        
-        default:
-            break;      //si se puede el break
-        
+            case 5:
+                nuevoNodoVotante = crearNodoVotante();
+                nuevoVotante = crearVotante();
+                nuevoNodoVotante->datosVotante = nuevoVotante;
+                break;
+                
+            default:
+                printf("Programa finalizado");
+                break; 
+        }    
     }
     return 0;
 }
