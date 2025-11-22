@@ -171,7 +171,7 @@ struct NodoMesa
     struct NodoMesa *sig;
 };
 
-struct Vocales
+struct Vocales   //sieeento que es un poco inecesario o lo quieres agregar como para hacer una funcion aparte 
 {
     char *nombre;
     int edad;
@@ -207,7 +207,7 @@ struct Votante
 };
 
 //usar strlen para calcular el tamaño exacto del ingreso dinamico al agregar, se escanenan con auxiliares antes de todo
-
+// idea para funcion extra decir la mesas que tengan todos los votos de los inscrito 
 //funciones para crear
 
 struct SistemaVotacion *nuevoSistema() 
@@ -237,7 +237,6 @@ struct SistemaVotacion *nuevoSistema()
 }
 
 //estos creados son solo modelos sobre los que yo a futuro puedo generar estructuras como las listas o los arreglos
-
 //para crear un nuevo nodo de la lista eleccion
 //retorno un puntero que apunta a ese nuevo nodo creado, por lo que despues lo puedo pasar para ingresar datos sin recorrer
 struct NodoEleccion *nuevoNodoEleccion()   //no estoy modificando nada, estoy agregando
