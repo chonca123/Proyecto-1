@@ -181,24 +181,6 @@ struct Mesa *crearMesa()
     return nuevo;
 }
 
-struct NodoVocal *crearNodoVocal()
-{
-    struct NodoVocal *nuevo;
-    nuevo = (struct NodoVocal *) malloc (sizeof(struct NodoVocal));
-    nuevo->datosVocal = NULL;
-    nuevo->sig = NULL;
-    return nuevo;
-}
-
-struct Vocales *crearVocal()
-{
-    struct Vocales *nuevo;
-    nuevo = (struct Vocales *) malloc (sizeof(struct Vocales));
-    nuevo->nombre = NULL;
-    nuevo->edad = 0;
-    return nuevo;
-}
-
 struct NodoVotante *nuevoNodoVotante()
 {
     struct NodoVotante *nuevo;
@@ -319,20 +301,6 @@ void agregarNodoMesa(struct Eleccion *eleccion, struct NodoMesa *nuevo)
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //datos para el sistema
 void ingresoDeDatos(struct SistemaVotacion *sistema) 
 {
@@ -357,13 +325,6 @@ void ingresoDeDatos(struct SistemaVotacion *sistema)
 
 
 //al ingresar datos yo puedo decir que cree una estructura (ingreso de datos en tiempo de ejecucion)
-
-
-
-
-
-
-
 
 
 //el switch ingresa un dato ingresado por el ususario y segun lo que quiera hace la funcion que necesita
@@ -482,15 +443,10 @@ int main()
                 break;
                 
             case 4:
-                nuevoNodoVocal = crearNodoVocal();
-                nuevoVocal = crearVocal();
-                break;
-            
-            case 5:
                 nuevoNodoVotante = crearNodoVotante();
                 nuevoVotante = crearVotante();
                 nuevoNodoVotante->datosVotante = nuevoVotante;
-                break;
+                break;           
                 
             default:
                 printf("Programa finalizado");
