@@ -495,6 +495,8 @@ void ingresoDeDatosVotante(struct Votante *estructura)
 
 
 
+
+
 void menuDeIngresoDeDatos(struct SistemaVotacion *sistema)
 {
     int numero, contadorParaCandidatos, i;
@@ -641,6 +643,52 @@ int main()
     
     printf("Bienvenido al sistema de votaciones de SERVEL\n");
     printf("Para comenzar, ingrese los siguentes datos que identifiquen al sistema de votaciones\n");
+    int main() {
+    int opcion;
+    do {
+        printf("\n==========================================\n");
+        printf("\n================== SERVEL ================\n");
+        printf("\n==========================================\n");
+        printf("\nBienvenido a nuestra paguina web\n");
+        printf("Por favor seleccione la opcion que desea utilizar\n");
+        printf("1. SistemaVotacion\n");
+        printf("2. Eleccion\n");
+        printf("3. Candidato\n");
+        printf("4. Mesa\n");
+        printf("5. Votante\n");
+        printf("0. Salir\n");
+        printf("Seleccione una opcion: ");
+
+        if (scanf("%d", &opcion) != 1) {
+            printf("No se ingreso una opcion valida. Terminando el programa.\n");
+            break;
+        }
+        getchar();
+
+        switch(opcion) {
+            case 1:
+                menuSistemaVotacion ();
+                break;
+            case 2:
+                menuElecciones();
+                break;
+            case 3:
+                menuCandidatos();
+                break;
+            case 4:
+                menuMesa();
+                break;
+            case 5:
+                menuVotantes();
+                break;
+            case 0:
+                printf("Saliendo del sistema...\n");
+                break;
+            default:
+                printf("Opcion invalida. Intente de nuevo.\n");
+        }
+    }
+                
     sistema = nuevoSistema();
     if (sistema == NULL) 
     {
