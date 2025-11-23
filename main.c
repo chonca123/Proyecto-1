@@ -598,7 +598,11 @@ int main()
     printf("Bienvenido al sistema de votaciones de SERVEL\n");
     printf("Para comenzar, ingrese los siguentes datos que identifiquen al sistema de votaciones\n");
     sistema = nuevoSistema();
-    if (sistema == NULL) printf("No se pudo crear el sistema") return 1;
+    if (sistema == NULL) 
+    {
+        printf("No se pudo crear el sistema");
+        return 1;
+    }
     ingresoDeDatos(sistema);  //aqui por ejemplo hay un ingreso de datos (del sistema general asi que se hace una sola vez, iniciado el sistema, solo este caso)
 
     //posteriormente ingreso datos (solicitar al ususario)
