@@ -297,6 +297,50 @@ void agregarMesa(struct Eleccion *eleccion)
     agregarNodoMesa(eleccion, nuevoNodo);
 }
 
+struct Mesa *buscarMesa(struct Eleccion *eleccion, int numeroBuscado)
+{
+    struct NodoMesa *rec;
+    int i;
+
+    rec = eleccion->listaMesas;
+
+    while (rec != NULL)
+    {
+        for (i = 0; i < 20; i++)
+        {
+            if (rec->datosMesa->PadronMesa[i] == numeroBuscado)
+            {
+                return rec->datosMesa;
+            }
+        }
+
+        rec = rec->sig;
+    }
+
+    return NULL;
+}
+
+void mostrarMesa(struct Mesa *mesa)
+{
+    int i;
+
+    printf("----- INFORMACION DE LA MESA -----\n");
+    printf("Vocales: %s\n", mesa->NombreVocales);
+
+    printf("Padron de mesa: ");
+    for (i = 0; i < 20; i++)
+    {
+        if (mesa->PadronMesa[i] != 0)
+        {
+            printf("%d ", mesa->PadronMesa[i]);
+        }
+    }
+    printf("\n");
+}
+
+
+
+
 
 
 //FUNCIONES VOTANTE 
