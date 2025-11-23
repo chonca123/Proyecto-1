@@ -83,7 +83,7 @@ struct Votante
 
 //usar strlen para calcular el tamaño exacto del ingreso dinamico al agregar, se escanenan con auxiliares antes de todo
 
-//SIStema votacion 
+//FUNCIONES SISTEMA INICIAL
 
 struct SistemaVotacion *nuevoSistema() 
 {
@@ -155,6 +155,9 @@ void agregarNodoEleccion(struct SistemaVotacion *sistema, struct NodoEleccion *n
         rec->sig = nodo;
     }
 }
+
+
+
 
 //FUNCIONES CANDIDATO 
 
@@ -236,10 +239,7 @@ void arregloFijo(struct TodosCandidatos *arreglo, int tamano)
     
 }
 
-void ingresoDeDatosCandidatos(struct Candidato *nodo)
-{
-    
-}
+
 
 
 //FUNCIONES DE MESA 
@@ -325,12 +325,34 @@ struct Votante *crearVotante()
     return nuevo;
 }
 
+void agregarNodoVotante(struct NodoVotante **raiz, struct NodoVotante *nuevo)
+{
+    if ((*raiz) == NULL)
+    {
+        (*raiz) = nuevo;
+        return;
+    }
+    else
+    {
+        //orden por edad
+        if ((*raiz)->datosVotante->edad < nuevo->datosVotante->edad)
+        {
+            agregarNodoVotante(&(*raiz)->izq, nuevo);
+        }
+        else
+        {
+            agregarNodoVotante(&(*raiz)->der, nuevo);
+        }
+    }
+}
 
 
 
 
 
-//datos para el sistema
+
+
+//Ingreso de datos para el sistema
 void ingresoDeDatos(struct SistemaVotacion *sistema) 
 {
     //para usarlo como auxiliar y no desperdiciar memoria cuando quede todo guardado. este auxiliar se destruye al salir de la funcion
