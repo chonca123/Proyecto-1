@@ -326,6 +326,10 @@ struct Votante *crearVotante()
 }
 
 
+
+
+
+
 //datos para el sistema
 void ingresoDeDatos(struct SistemaVotacion *sistema) 
 {
@@ -348,8 +352,80 @@ void ingresoDeDatos(struct SistemaVotacion *sistema)
     scanf("%d %d %d", &sistema->FechaVotacion.dia, &sistema->FechaVotacion.mes, &sistema->FechaVotacion.anio);
 }
 
+void ingresoDeDatosEleccion(struct Eleccion *nodo)
+{
+    int numero;
+    
+    printf("Ingrese numero de vuelta de esta eleccion\n");
+    scanf("%d", &numero);
+}
 
-//al ingresar datos yo puedo decir que cree una estructura (ingreso de datos en tiempo de ejecucion)
+void ingresoDeDatosCandidatos(struct Candidato *espacio)
+{
+    int 
+    char aux[200];
+    
+    printf("Ingrese el rut del candidato\n");
+    scanf(" %[^\n]", espacio->rut);
+    
+    printf("Ingrese el nombre del candidato\n");
+    scanf(" %[^\n]", aux);
+    
+    espacio->NombreCandidato = (char *) malloc ((strlen(aux) + 1) * sizeof(char));
+    strcpy(espacio->NombreCandidato, aux);
+    
+    printf("Ingrese la nacionalidad del candidato\n");
+    scanf(" %[^\n]", espacio->nacionalidad);
+    
+    printf("Ingrese la edad del candidato\n");
+    scanf("%d", espacio->edad);
+    
+    printf("Ingrese el partido politico del candidato\n");
+    scanf(" %[^\n]", aux);
+    
+    espacio->PartidoPolitico = (char *) malloc ((strlen(aux) + 1) * sizeof(char));
+    strcpy(espacio->PartidoPolitico, aux);
+    
+    printf("Ingrese el programa de gobierno del candidato\n");
+    scanf(" %[^\n]", aux);
+    
+    espacio->ProgramaGobierno = (char *) malloc ((strlen(aux) + 1) * sizeof(char));
+    strcpy(espacio->ProgramaGobierno, aux);
+    
+    printf("Ingrese un 1 si su candidato tiene antecedentes o un 0 si no los tiene\n");
+    scanf("%d", espacio->delitos);
+}
+
+//esto tiene el ingreso si se deja esos datos de vocales estaticos, sino, se borra
+void ingresoDeDatosMesa()
+{
+    
+}
+
+void ingresoDeDatosVotante(struct Votante *estructura)
+{
+    char aux[200];
+    
+    printf("Ingrese el nombre del votante\n");
+    scanf(" %[^\n]", aux);
+    
+    estructura->Nombre = (char *) malloc ((strlen(aux) + 1) * sizeof(char));
+    strcpy(estructura->Nombre, aux);
+    
+    printf("Ingrese la edad del votante\n");
+    scanf("%d", estructura->edad);
+    
+    printf("Ingrese la nacionalidad del votante\n");
+    scanf(" %[^\n]", estructura->Nacionalidad);
+    
+    printf("Ingrese el rut del votante\n");
+    scanf(" %[^\n]", estructura->rut);
+    
+    printf("Ingrese el pais de residencia del votante\n");
+    scanf(" %[^\n]", estructura->paisResidencia);
+}
+
+
 
 
 
@@ -376,7 +452,7 @@ void menuDeIngresoDeDatos(struct SistemaVotacion *sistema)
         printf("1. Ingreso de una nueva eleccion\n");
         printf("2. Ingreso de candidatos\n");
         printf("3. Ingreso de mesas\n");
-        printf("5. Ingreso de votantes\n");
+        printf("4. Ingreso de votantes\n");
         printf("0. Finalizar el ingreso de datos para su elección\n");
         
         scanf("%d", &numero);
@@ -386,12 +462,12 @@ void menuDeIngresoDeDatos(struct SistemaVotacion *sistema)
             //considerar en caso de que una opcion ya se haya agregado y no se pueda modificar, la nueva eleccion por ejemplo
             
             case 1:
-                nodoNuevoEleccion = nuevoNodoEleccion();   //esto crea la lista eleccion, esto tiene solo punteros, por eso no tiene un ingreso de datos
+                nodoNuevoEleccion = nuevoNodoEleccion();   //se crea el nodo de la eleccion
                 
-                nuevaEleccion = crearEleccion();
-                ingresoDeDatosEleccion(nuevaEleccion);
-                nodoNuevoEleccion->datosEleccion = nuevaEleccion;
-                agregarNodoEleccion(sistema, nodoNuevoEleccion);   //para unir al sistema en caso de no haber nada o agregar a la lista existente
+                nuevaEleccion = crearEleccion();           //se crea la estructura de eleccion
+                ingresoDeDatosEleccion(nuevaEleccion);     //ingreso de datos
+                nodoNuevoEleccion->datosEleccion = nuevaEleccion;       //se une la eleccion al nodo
+                agregarNodoEleccion(sistema, nodoNuevoEleccion);   //se une el nodo a la lista del sistema
                 printf("Se agrego una nueva elección\n");
                 break;
                 
@@ -434,19 +510,6 @@ void menuDeIngresoDeDatos(struct SistemaVotacion *sistema)
             case 4:
                 if (nuevaMesa == NULL)
                 {
-                    printf("Error: se debe crear una mesa previamente\n");
-                    break;
-                }
-                nuevoNodoVocal = crearNodoVocal();
-                nuevoVocal = crearVocal();
-                ingresoDeDatosVocal(nuevoVocal);
-                nuevoNodoVocal->datosVocal = nuevoVocal;
-                agregarNodoVocal(nuevaMesa, nuevoNodoVocal);
-                break;
-            
-            case 5:
-                if (nuevaMesa == NULL)
-                {
                     printf("Error: se debe crear una nueva mesa previamente\n");
                     break;
                 }
@@ -454,7 +517,7 @@ void menuDeIngresoDeDatos(struct SistemaVotacion *sistema)
                 nuevoVotante = crearVotante();
                 ingresoDeDatosVotante(nuevoVotante);
                 nuevoNodoVotante->datosVotante = nuevoVotante;
-                agregarNodoVotante(nuevaMesa->votantes, nuevoNodoVotante);
+                agregarNodoVotante(&(nuevaMesa->votantes), nuevoNodoVotante);    //& en caso de modificar la raiz (pensar para las listas), esto une la mesa con el arbol
                 break;
                 
             case 0:
