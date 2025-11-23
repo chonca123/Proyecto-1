@@ -56,18 +56,11 @@ struct NodoMesa
     struct NodoMesa *sig;
 };
 
-//los struct Vocales y NodoVocal no estan en el dibujo, son extras, aunque no se si se puede hacer
-struct Vocales
-{
-    char *nombre;
-    int edad;
-    char rut[15];
-};
-
 struct Mesa
 {
-    struct NodoVocal *listaVocales;          //lista interna que contiene los vocales de la mesa, porque pueden haber varios
-    struct NodoVotante *votantes;  
+    char NombreVocales[216];
+    int PadronMesa[20];  
+    struct NodoVotante *votantes;  // lista interna, empieza NULL
 };
 
 struct NodoVotante
@@ -264,9 +257,8 @@ struct NodoMesa *crearNodoMesa()
 struct Mesa *crearMesa()
 {
     struct Mesa *nuevo;
-    
-    nuevo = (struct Mesa *) malloc (sizeof(structMesa));
-    nuevo->listaVocales = NULL;
+
+    nuevo = (struct Mesa *) malloc(sizeof(struct Mesa));
     nuevo->votantes = NULL;
     return nuevo;
 }
@@ -289,6 +281,22 @@ void agregarNodoMesa(struct Eleccion *eleccion, struct NodoMesa *nuevo)
         rec->sig = nuevo;
     }
 }
+
+void agregarMesa(struct Eleccion *eleccion)
+{
+    struct NodoMesa *nuevoNodo;
+    struct Mesa *nuevaMesa;
+
+    nuevoNodo = crearNodoMesa();
+    nuevaMesa = crearMesa();
+
+    cargarDatosMesa(nuevaMesa); 
+
+    nuevoNodo->datosMesa = nuevaMesa;
+
+    agregarNodoMesa(eleccion, nuevoNodo);
+}
+
 
 
 //FUNCIONES VOTANTE 
