@@ -400,7 +400,7 @@ void ingresoDeDatosCandidatos(struct Candidato *espacio)
     scanf(" %[^\n]", espacio->nacionalidad);
     
     printf("Ingrese la edad del candidato\n");
-    scanf("%d", espacio->edad);
+    scanf("%d", &espacio->edad);
     
     printf("Ingrese el partido politico del candidato\n");
     scanf(" %[^\n]", aux);
@@ -415,7 +415,7 @@ void ingresoDeDatosCandidatos(struct Candidato *espacio)
     strcpy(espacio->ProgramaGobierno, aux);
     
     printf("Ingrese un 1 si su candidato tiene antecedentes o un 0 si no los tiene\n");
-    scanf("%d", espacio->delitos);
+    scanf("%d", &espacio->delitos);
 }
 
 //esto tiene el ingreso si se deja esos datos de vocales estaticos, sino, se borra
