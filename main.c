@@ -94,12 +94,6 @@ struct Votante
 };
 
 
-
-
-
-
-
-
 //usar strlen para calcular el tamaño exacto del ingreso dinamico al agregar, se escanenan con auxiliares antes de todo
 
 //funciones para crear
@@ -155,6 +149,28 @@ struct Eleccion *crearEleccion()
     return nuevo;
 }
 
+
+void agregarNodoEleccion(struct SistemaVotacion *sistema, struct NodoEleccion *nodo)
+{
+    struct NodoEleccion *rec;
+    //esto va en su propia funcion para insertar elecciones
+    if (sistema->elecciones == NULL)
+    {
+        sistema->elecciones = nodo;
+    }
+    else
+    {
+        rec = sistema->elecciones;
+        while (rec->sig != NULL)     //con esto se detiene en el ultimo nodo
+        {
+            rec = rec->sig;    //va aqui, para llegar al final y luego insertarlo
+        }
+        rec->sig = nodo;
+    }
+}
+
+//FUNCIONES CANDIDATO 
+
 struct TodosCandidatos *crearArregloCandidatos()
 {
     struct TodosCandidatos *nuevo;
@@ -183,107 +199,6 @@ struct Candidato *crearCandidato()
     return nuevo;
 }
 
-struct NodoMesa *crearNodoMesa()
-{
-    struct NodoMesa *nuevo;
-    
-    nuevo = (struct NodoMesa *) malloc (sizeof(struct NodoMesa));
-    nuevo->datosMesa = NULL;
-    nuevo->sig = NULL;
-    return nuevo;
-}
-
-struct Mesa *crearMesa()
-{
-    struct Mesa *nuevo;
-    
-    nuevo = (struct Mesa *) malloc (sizeof(structMesa));
-    nuevo->listaVocales = NULL;
-    nuevo->votantes = NULL;
-    return nuevo;
-}
-
-struct NodoVocal *crearNodoVocal()
-{
-    struct NodoVocal *nuevo;
-    nuevo = (struct NodoVocal *) malloc (sizeof(struct NodoVocal));
-    nuevo->datosVocal = NULL;
-    nuevo->sig = NULL;
-    return nuevo;
-}
-
-struct Vocales *crearVocal()
-{
-    struct Vocales *nuevo;
-    nuevo = (struct Vocales *) malloc (sizeof(struct Vocales));
-    nuevo->nombre = NULL;
-    nuevo->edad = 0;
-    nuevo->rut[0] = '\0';
-    return nuevo;
-}
-
-struct NodoVotante *nuevoNodoVotante()
-{
-    struct NodoVotante *nuevo;
-    nuevo = (struct NodoVotante *) malloc (sizeof(struct NodoVotante));
-    nuevo->idVotante = 0;
-    nuevo->datosVotante = NULL;
-    nuevo->izq = NULL;
-    nuevo->der = NULL;
-    return nuevo;
-}
-
-struct Votante *crearVotante()
-{
-    struct Votante *nuevo;
-    nuevo = (struct Votante *) malloc (sizeof(struct Votante));
-    nuevo->voto = NULL;
-    nuevo->Nombre = NULL;
-    nuevo->edad = 0;
-    nuevo->nacionalidad[0] = '\0';
-    nuevo->rut[0] = '\0';
-    nuevo->paisResidencia[0] = '\0';
-    return nuevo;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-//funciones para unir
-
-void agregarNodoEleccion(struct SistemaVotacion *sistema, struct NodoEleccion *nodo)
-{
-    struct NodoEleccion *rec;
-    //esto va en su propia funcion para insertar elecciones
-    if (sistema->elecciones == NULL)
-    {
-        sistema->elecciones = nodo;
-    }
-    else
-    {
-        rec = sistema->elecciones;
-        while (rec->sig != NULL)     //con esto se detiene en el ultimo nodo
-        {
-            rec = rec->sig;    //va aqui, para llegar al final y luego insertarlo
-        }
-        rec->sig = nodo;
-    }
-}
-
-
-
-
-
-//esta funcion valida si un candidato que se quiere ingresar cumple con los requisitos o no
 int contadorParaCandidatos()
 {
     int edad, delito, contador = 0, bandera;
@@ -340,13 +255,27 @@ void ingresoDeDatosCandidatos(struct Candidato *nodo)
 }
 
 
+//FUNCIONES DE MESA 
 
+struct NodoMesa *crearNodoMesa()
+{
+    struct NodoMesa *nuevo;
+    
+    nuevo = (struct NodoMesa *) malloc (sizeof(struct NodoMesa));
+    nuevo->datosMesa = NULL;
+    nuevo->sig = NULL;
+    return nuevo;
+}
 
-
-
-
-
-
+struct Mesa *crearMesa()
+{
+    struct Mesa *nuevo;
+    
+    nuevo = (struct Mesa *) malloc (sizeof(structMesa));
+    nuevo->listaVocales = NULL;
+    nuevo->votantes = NULL;
+    return nuevo;
+}
 
 void agregarNodoMesa(struct Eleccion *eleccion, struct NodoMesa *nuevo)
 {
@@ -368,17 +297,31 @@ void agregarNodoMesa(struct Eleccion *eleccion, struct NodoMesa *nuevo)
 }
 
 
+//FUNCIONES VOTANTE 
 
+struct NodoVotante *nuevoNodoVotante()
+{
+    struct NodoVotante *nuevo;
+    nuevo = (struct NodoVotante *) malloc (sizeof(struct NodoVotante));
+    nuevo->idVotante = 0;
+    nuevo->datosVotante = NULL;
+    nuevo->izq = NULL;
+    nuevo->der = NULL;
+    return nuevo;
+}
 
-
-
-
-
-
-
-
-
-
+struct Votante *crearVotante()
+{
+    struct Votante *nuevo;
+    nuevo = (struct Votante *) malloc (sizeof(struct Votante));
+    nuevo->voto = NULL;
+    nuevo->Nombre = NULL;
+    nuevo->edad = 0;
+    nuevo->nacionalidad[0] = '\0';
+    nuevo->rut[0] = '\0';
+    nuevo->paisResidencia[0] = '\0';
+    return nuevo;
+}
 
 
 //datos para el sistema
