@@ -58,8 +58,7 @@ struct NodoMesa
 
 struct Mesa
 {
-    char NombreVocales[216];
-    int PadronMesa[20];  
+    int PadronMesa;  
     struct NodoVotante *votantes;  // lista interna, empieza NULL
 };
 
