@@ -64,12 +64,6 @@ struct Vocales
     char rut[15];
 };
 
-struct NodoVocal
-{
-    struct Vocales *datosVocal;
-    struct NodoVocal *sig;
-};
-
 struct Mesa
 {
     struct NodoVocal *listaVocales;          //lista interna que contiene los vocales de la mesa, porque pueden haber varios
