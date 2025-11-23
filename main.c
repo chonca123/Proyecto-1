@@ -96,7 +96,7 @@ struct Votante
 
 //usar strlen para calcular el tamaño exacto del ingreso dinamico al agregar, se escanenan con auxiliares antes de todo
 
-//funciones para crear
+//SIStema votacion 
 
 struct SistemaVotacion *nuevoSistema() 
 {
