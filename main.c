@@ -248,6 +248,10 @@ struct NodoMesa *crearNodoMesa()
     struct NodoMesa *nuevo;
     
     nuevo = (struct NodoMesa *) malloc (sizeof(struct NodoMesa));
+    if (nuevo == NULL)
+    {
+        return NULL;
+    }
     nuevo->datosMesa = NULL;
     nuevo->sig = NULL;
     return nuevo;
@@ -258,6 +262,10 @@ struct Mesa *crearMesa()
     struct Mesa *nuevo;
 
     nuevo = (struct Mesa *) malloc(sizeof(struct Mesa));
+    if (nuevo == NULL)
+    {
+        return NULL;
+    }
     nuevo->votantes = NULL;
     return nuevo;
 }
@@ -287,30 +295,51 @@ void agregarMesa(struct Eleccion *eleccion)
     struct Mesa *nuevaMesa;
 
     nuevoNodo = crearNodoMesa();
+    if (nuevoNodo == NULL)
+    {
+        return;
+    }
+    
     nuevaMesa = crearMesa();
+    if (nuevaMesa == NULL)
+    {
+        free(nuevoNodo);
+        return;
+    }
 
-    cargarDatosMesa(nuevaMesa); 
+    cargarDatosMesa(nuevaMesa);
 
     nuevoNodo->datosMesa = nuevaMesa;
 
     agregarNodoMesa(eleccion, nuevoNodo);
+    mensajeMesaAgregada();
 }
+
+void cargarDatosMesa(struct Mesa *mesa)
+{
+    printf("Ingrese el numero de padron de la mesa: ");
+    scanf("%d", &mesa->PadronMesa);
+
+    mesa->votantes = NULL;
+}
+
+void mensajeMesaAgregada()
+{
+    printf("La mesa fue agregada correctamente.\n");
+}
+
 
 struct Mesa *buscarMesa(struct Eleccion *eleccion, int numeroBuscado)
 {
     struct NodoMesa *rec;
-    int i;
 
     rec = eleccion->listaMesas;
 
     while (rec != NULL)
     {
-        for (i = 0; i < 20; i++)
+        if (rec->datosMesa->PadronMesa == numeroBuscado)
         {
-            if (rec->datosMesa->PadronMesa[i] == numeroBuscado)
-            {
-                return rec->datosMesa;
-            }
+            return rec->datosMesa;
         }
 
         rec = rec->sig;
@@ -319,22 +348,110 @@ struct Mesa *buscarMesa(struct Eleccion *eleccion, int numeroBuscado)
     return NULL;
 }
 
-void mostrarMesa(struct Mesa *mesa)
+
+void mostrarMesaEncontrada(struct Mesa *mesa)
 {
-    int i;
+    printf("----- MESA ENCONTRADA -----\n");
+    printf("Numero de Padron: %d\n", mesa->PadronMesa);
+    printf("Votantes: (se muestran en otra funcion)\n");
+}
 
-    printf("----- INFORMACION DE LA MESA -----\n");
-    printf("Vocales: %s\n", mesa->NombreVocales);
+void mostrarMesaNoEncontrada()
+{
+    printf("No se encontro ninguna mesa con ese numero de padron.\n");
+}
 
-    printf("Padron de mesa: ");
-    for (i = 0; i < 20; i++)
+int eliminarMesa(struct Eleccion *eleccion, int numeroBuscado)
+{
+    struct NodoMesa *rec;
+    struct NodoMesa *ant;
+
+    rec = eleccion->listaMesas;
+    ant = NULL;
+
+    while (rec != NULL)
     {
-        if (mesa->PadronMesa[i] != 0)
+        if (rec->datosMesa->PadronMesa == numeroBuscado)
         {
-            printf("%d ", mesa->PadronMesa[i]);
+            if (ant == NULL)
+            {
+                eleccion->listaMesas = rec->sig;
+            }
+            else
+            {
+                ant->sig = rec->sig;
+            }
+
+            free(rec->datosMesa);
+            free(rec);
+
+            mensajeMesaEliminada();
+            return 1;
         }
+
+        ant = rec;
+        rec = rec->sig;
     }
-    printf("\n");
+
+    mensajeMesaNoExiste();
+    return 0;
+}
+
+void mensajeMesaEliminada()
+{
+    printf("La mesa fue eliminada correctamente.\n");
+}
+
+void mensajeMesaNoExiste()
+{
+    printf("No existe ninguna mesa con ese numero de padron.\n");
+}
+
+int modificarDenuncia(struct nodo_Denuncias *lista, int RUC, 
+                      const char *nuevoTipo, const char *nuevaDescripcion, int nuevaFecha)
+{
+    struct nodo_Denuncias *nodo;
+
+    if (lista == NULL || nuevoTipo == NULL || nuevaDescripcion == NULL)
+    {
+        imprimir_modificacion_fallida(RUC);
+        return -1;
+    }
+
+    nodo = buscarDenuncia(lista, RUC);
+
+    if (nodo == NULL)
+    {
+        imprimir_modificacion_fallida(RUC);
+        return -1;
+    }
+
+    strncpy(nodo->Denuncias->Tipo_denunciante, nuevoTipo, 
+            sizeof(nodo->Denuncias->Tipo_denunciante) - 1);
+    nodo->Denuncias->Tipo_denunciante[sizeof(nodo->Denuncias->Tipo_denunciante) - 1] = '\0';
+    
+    strncpy(nodo->Denuncias->descripcion, nuevaDescripcion, 
+            sizeof(nodo->Denuncias->descripcion) - 1);
+    nodo->Denuncias->descripcion[sizeof(nodo->Denuncias->descripcion) - 1] = '\0';
+
+    nodo->Denuncias->fecha = nuevaFecha;
+
+    imprimir_modificacion_exitosa(RUC, nuevoTipo, nuevaDescripcion, nuevaFecha);
+
+    return 1;
+}
+
+void imprimir_modificacion_exitosa(int RUC, const char *nuevoTipo, const char *nuevaDescripcion, int nuevaFecha)
+{
+    printf("Modificacion exitosa para RUC %d\n", RUC);
+    printf("Nuevo tipo: %s\n", nuevoTipo);
+    printf("Nueva descripcion: %s\n", nuevaDescripcion);
+    printf("Nueva fecha: %d\n", nuevaFecha);
+}
+
+void imprimir_modificacion_fallida(int RUC)
+{
+    printf("ERROR: No se encontro denuncia con el RUC %d.\n", RUC);
 }
 
 //FUNCIONES VOTANTE 
