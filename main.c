@@ -337,11 +337,6 @@ void mostrarMesa(struct Mesa *mesa)
     printf("\n");
 }
 
-
-
-
-
-
 //FUNCIONES VOTANTE 
 
 struct NodoVotante *nuevoNodoVotante()
