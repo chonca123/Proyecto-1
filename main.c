@@ -527,8 +527,6 @@ void menuSistemaVotacion()
     } while (numero)
 }
 
-
-
 void menuElecciones()
 {
     int numero
@@ -566,7 +564,6 @@ void menuElecciones()
         }
     } while (numero)
 }
-
 
 void menuCandidatos()
 {
@@ -644,8 +641,6 @@ void menuVotantes()
     } while (numero)
 }
 
-
-
 void menuMesa()
 {
     int numero
@@ -684,15 +679,15 @@ void menuMesa()
     } while (numero)
 }
 
-
-
-
-
-//el switch ingresa un dato ingresado por el ususario y segun lo que quiera hace la funcion que necesita
-
 int main()
 {
+    //Va o no sistema??
+    struct SistemaVotacion *sistema;
     int opcion;
+    
+    sistema = nuevoSistema();
+    ingresoDeDatos(sistema);
+    
     do 
     {
         printf("\n==========================================\n");
@@ -718,7 +713,7 @@ int main()
         switch(opcion) 
         {
             case 1:
-                menuSistemaVotacion ();
+                menuSistemaVotacion();
                 break;
             case 2:
                 menuElecciones();
@@ -738,6 +733,6 @@ int main()
             default:
                 printf("Opcion invalida. Intente de nuevo.\n");
         }
-    } while ();           
+    } while (opcion != (-1));           
     return 0;
 }
