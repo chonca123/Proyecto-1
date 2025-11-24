@@ -693,7 +693,8 @@ void menuMesas()
 int main()
 {
     int opcion;
-    do {
+    do 
+    {
         printf("\n==========================================\n");
         printf("\n================== SERVEL ================\n");
         printf("\n==========================================\n");
@@ -707,13 +708,15 @@ int main()
         printf("0. Salir\n");
         printf("Seleccione una opcion: ");
 
-        if (scanf("%d", &opcion) != 1) {
+        if (scanf("%d", &opcion) != 1) 
+        {
             printf("No se ingreso una opcion valida. Terminando el programa.\n");
             break;
         }
         getchar();
 
-        switch(opcion) {
+        switch(opcion) 
+        {
             case 1:
                 menuSistemaVotacion ();
                 break;
@@ -735,6 +738,6 @@ int main()
             default:
                 printf("Opcion invalida. Intente de nuevo.\n");
         }
-    }           
+    } while ();           
     return 0;
 }
