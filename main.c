@@ -692,12 +692,6 @@ void menuMesas()
 
 int main()
 {
-    struct SistemaVotacion *sistema;
-    //creo primero una estructura por una de forma independiente para luego unir en tiempo de ejecucion a medida que el usuario ingrese informacion
-    
-    printf("Bienvenido al sistema de votaciones de SERVEL\n");
-    printf("Para comenzar, ingrese los siguentes datos que identifiquen al sistema de votaciones\n");
-    int main() {
     int opcion;
     do {
         printf("\n==========================================\n");
@@ -741,21 +735,6 @@ int main()
             default:
                 printf("Opcion invalida. Intente de nuevo.\n");
         }
-    }
-                
-    sistema = nuevoSistema();
-    if (sistema == NULL) 
-    {
-        printf("No se pudo crear el sistema");
-        return 1;
-    }
-    ingresoDeDatos(sistema);  //aqui por ejemplo hay un ingreso de datos (del sistema general asi que se hace una sola vez, iniciado el sistema, solo este caso)
-
-    //posteriormente ingreso datos (solicitar al ususario)
-    //se divide el menu en fases (funciones), primero para el ingreso de datos iniciales (agregado inicial) y creacion del sistema (antes de la votacion), y luego para su modificacion
-    menuDeIngresoDeDatos(sistema);
-    menuModificacionDeDatos(sistema);
-    menuOperaciones(sistema);
-    
+    }           
     return 0;
 }
