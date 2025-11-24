@@ -872,6 +872,202 @@ void menuCandidatos()
     } while (numero)
 }
 
+
+
+
+void agregarVotante(struct NodoVotante **raiz)
+{
+    struct NodoVotante *nuevo;
+    struct Votante *auxDatos;
+    char aux[200];
+
+    nuevo = nuevoNodoVotante();  
+    auxDatos = crearVotante();   
+
+    printf("Ingrese nombre del votante:\n");
+    fgets(aux, 200, stdin);
+    aux[strcspn(aux, "\n")] = '\0';
+    auxDatos->Nombre = (char *) malloc((strlen(aux)+1) * sizeof(char));
+    strcpy(auxDatos->Nombre, aux);
+
+    printf("Ingrese edad del votante:\n");
+    scanf("%d", &auxDatos->edad);
+    getchar();
+
+    printf("Ingrese nacionalidad del votante:\n");
+    fgets(aux, 200, stdin);
+    aux[strcspn(aux, "\n")] = '\0';
+    strcpy(auxDatos->Nacionalidad, aux);
+
+    printf("Ingrese rut del votante:\n");
+    fgets(aux, 200, stdin);
+    aux[strcspn(aux, "\n")] = '\0';
+    strcpy(auxDatos->rut, aux);
+
+    printf("Ingrese pais de residencia del votante:\n");
+    fgets(aux, 200, stdin);
+    aux[strcspn(aux, "\n")] = '\0';
+    strcpy(auxDatos->paisResidencia, aux);
+
+
+    nuevo->datosVotante = auxDatos;
+    agregarNodoVotante(raiz, nuevo);
+
+    printf("Votante agregado correctamente.\n");
+}
+
+
+int buscarVotante(struct NodoVotante *raiz, char *rut)
+{
+    struct NodoVotante *izq, *der;
+    
+    if (raiz != NULL)
+    {
+        if (strcmp(raiz->datosVotante->rut, rut) == 0)
+        {
+            printf("Nombre votante: %s\n", raiz->datosVotante->Nombre);
+            printf("Rut votante %s\n", raiz->datosVotante->rut);
+            printf("Edad votante: %d\n", raiz->datosVotante->edad);
+            printf("Nacionalidad votante: %s\n", raiz->datosVotante->Nacionalidad);
+            printf("Pais de residencia del votante: %s\n", raiz->datosVotante->paisResidencia);
+            return 1;
+        }
+        
+        if (buscarVotante(raiz->izq, rut))
+        {
+            return 1;
+        }
+
+        return buscarVotante(raiz->der, rut);
+    }
+    return 0;
+}
+
+struct NodoVotante* eliminarVotante(struct NodoVotante *raiz, char *rut)
+{
+    if (raiz == NULL)
+    {
+        return NULL;
+    }
+
+    if (strcmp(raiz->datosVotante->rut, rut) == 0)
+    {
+        if (raiz->izq == NULL && raiz->der == NULL)
+        {
+            free(raiz->datosVotante->Nombre);   
+            free(raiz->datosVotante);
+            free(raiz);
+            return NULL;
+        }
+
+        if (raiz->izq == NULL) {
+            struct NodoVotante *temp = raiz->der;
+            free(raiz->datosVotante->Nombre);
+            free(raiz->datosVotante);
+            free(raiz);
+            return temp;
+        }
+        if (raiz->der == NULL) {
+            struct NodoVotante *temp = raiz->izq;
+            free(raiz->datosVotante->Nombre);
+            free(raiz->datosVotante);
+            free(raiz);
+            return temp;
+        }
+        
+        struct NodoVotante *temp = raiz->der;
+        while (temp->izq != NULL)
+            temp = temp->izq;
+
+        raiz->datosVotante->edad = temp->datosVotante->edad;
+        strcpy(raiz->datosVotante->rut, temp->datosVotante->rut);
+        strcpy(raiz->datosVotante->Nacionalidad, temp->datosVotante->Nacionalidad);
+        strcpy(raiz->datosVotante->paisResidencia, temp->datosVotante->paisResidencia);
+        strcpy(raiz->datosVotante->Nombre, temp->datosVotante->Nombre);
+
+        raiz->der = eliminarVotante(raiz->der, temp->datosVotante->rut);
+        return raiz;
+    }
+
+    raiz->izq = eliminarVotante(raiz->izq, rut);
+    raiz->der = eliminarVotante(raiz->der, rut);
+    return raiz;
+}
+
+struct NodoVotante* buscarNodoVotante(struct NodoVotante *raiz, char *rut)
+{
+    struct NodoVotante *aux;
+    if (raiz == NULL) return NULL;
+
+    if (strcmp(raiz->datosVotante->rut, rut) == 0)
+        return raiz;  
+
+    aux = buscarNodoVotante(raiz->izq, rut);
+    if (aux != NULL) 
+    {
+        return aux;
+    }
+    return buscarNodoVotante(raiz->der, rut);
+}
+
+
+void modificarVotante(struct NodoVotante *raiz, char *rut)
+{
+    struct NodoVotante *nodo;  // función que RETORNA el nodo
+    char aux[200];
+
+
+    nodo = buscarNodoVotante(raiz, rut);
+    if (nodo == NULL) 
+    {
+        printf("No se encontró el votante\n");
+        return;
+    }
+
+    printf("Ingrese nuevo nombre: ");
+    fgets(aux, sizeof(aux), stdin);
+    aux[strcspn(aux, "\n")] = '\0';
+
+    free(nodo->datosVotante->Nombre);
+    nodo->datosVotante->Nombre = malloc(strlen(aux)+1);
+    strcpy(nodo->datosVotante->Nombre, aux);
+
+    printf("Ingrese nueva edad: ");
+    scanf("%d", &nodo->datosVotante->edad);
+    getchar();
+
+    printf("Ingrese nueva nacionalidad: ");
+    fgets(aux, sizeof(aux), stdin);
+    aux[strcspn(aux, "\n")] = '\0';
+    strcpy(nodo->datosVotante->Nacionalidad, aux);
+
+    printf("Ingrese nuevo país de residencia: ");
+    fgets(aux, sizeof(aux), stdin);
+    aux[strcspn(aux, "\n")] = '\0';
+    strcpy(nodo->datosVotante->paisResidencia, aux);
+
+    printf("Datos modificados correctamente.\n");
+}
+
+
+void mostrarVotantes(struct NodoVotante *raiz)
+{
+    if (raiz != NULL)
+    {
+        mostrarVotantes(raiz->izq);
+        printf("Nombre votante: %s\n", raiz->datosVotante->Nombre);
+        printf("Rut votante %s\n", raiz->datosVotante->rut);
+        printf("Edad votante: %d\n", raiz->datosVotante->edad);
+        printf("Nacionalidad votante: %s\n", raiz->datosVotante->Nacionalidad);
+        printf("Pais de residencia del votante: %s\n", raiz->datosVotante->paisResidencia);
+        mostrarVotantes(raiz->der);
+    }
+    else
+    {
+        printf("No hay votantes registrados\n");
+    }
+}
+
 void menuVotantes(struct Mesa *mesa)
 {
     int numero;
@@ -908,7 +1104,7 @@ void menuVotantes(struct Mesa *mesa)
                 printf("Ingrese el rut del votante que desea eliminar\n");
                 fgets(aux, sizeof(aux), stdin);
                 aux[strcspn(aux, "\n")] = '\0';
-                eliminarVotante(&(mesa->votantes), aux);
+                mesa->votantes = eliminarVotante(mesa->votantes, aux);
                 break;
             
             case 4:
