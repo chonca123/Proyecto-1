@@ -486,35 +486,202 @@ void ingresoDeDatosVotante(struct Votante *estructura)
 }
 
 
-void menuModificacionDeDatos(struct SistemaVotacion *sistema)
+
+//MENUS
+//sera necesario el de sistema??
+void menuSistemaVotacion()
 {
-    //TODAS ESTAS OPCIONES PARA MANIPULAR DATOS
+    int numero
     
-    /*printf("si la eleccion es nueva, ingrese el numero \n");
-    printf("si necesita eliminar una eleccion, ingrese el numero \n");
-    printf("si necesita buscar una eleccion, ingrese el numero \n");
-    printf("si necesita modificar una eleccion, ingrese el numero \n");
-    printf("si necesita mostrar los datos de una eleccion, ingrese el numero \n");
-    printf("si necesita agregar un candidato, ingrese el numero \n");
-    printf("si necesita eliminar un candidato, ingrese el numero \n");
-    printf("si necesita buscar un candidato, ingrese el numero \n");
-    printf("si necesita modificar un candidato, ingrese el numero \n");
-    printf("si necesita mostrar los datos de un candidato, ingrese el numero \n");
-    printf("si necesita agregar una mesa, ingrese el numero \n");
-    printf("si necesita eliminar una mesa, ingrese el numero \n");
-    printf("si necesita buscar una mesa, ingrese el numero \n");
-    printf("si necesita modificar una mesa, ingrese el numero \n");
-    printf("si necesita mostrar los datos de una mesa, ingrese el numero \n");
-    printf("si necesita agregar un votante, ingrese el numero \n");
-    printf("si necesita eliminar un votante, ingrese el numero \n");
-    printf("si necesita buscar un votante, ingrese el numero \n");
-    printf("si necesita modificar un votante, ingrese el numero \n");
-    printf("si necesita mostrar los datos de un votante, ingrese el numero \n");*/
+    do
+    {
+        printf("Usted accedió al menú sistema de votacion\n");
+        printf("Seleccione la opción que desee\n");
+        printf("1. crear un sistema\n");
+        printf("2. buscar un sistema\n");
+        printf("3. eliminar un sistema\n");
+        printf("4. Modificar un sistema\n");
+        printf("5. Mostrar la informacion del sistema\n");
+        printf("0. Salir del menú sistema\n");
+        
+        scanf("%d", &numero);
+        
+        switch (numero)
+        {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 0:
+                printf("Usted ha salido del menú sistema\n");
+            default:
+                printf("Ingrese una opción valida\n");
+                break;
+        }
+    } while (numero)
 }
 
-void menuOperaciones(struct SistemaVotacion *sistema)
+
+
+void menuElecciones()
 {
-    //AQUI OPCIONES PARA OPERACIONES DEL SISTEMA (CONTEO DE VOTOS POR EJ.)
+    int numero
+    
+    do
+    {
+        printf("Usted accedió al menú elecciones\n");
+        printf("Seleccione la opción que desee\n");
+        printf("1. agregar una eleccion\n");
+        printf("2. buscar una eleccion\n");
+        printf("3. eliminar una eleccion\n");
+        printf("4. Modificar una eleccion\n");
+        printf("5. Mostrar la informacion de la eleccion\n");
+        printf("0. Salir del menú elecciones\n");
+        
+        scanf("%d", &numero);
+        
+        switch (numero)
+        {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 0:
+                printf("Usted ha salido del menú elecciones\n");
+            default:
+                printf("Ingrese una opción valida\n");
+                break;
+        }
+    } while (numero)
+}
+
+
+void menuCandidatos()
+{
+    int numero
+    
+    do
+    {
+        printf("Usted accedió al menú candidatos\n");
+        printf("Seleccione la opción que desee\n");
+        printf("1. agregar un candidato\n");
+        printf("2. buscar un candidato\n");
+        printf("3. eliminar un candidato\n");
+        printf("4. Modificar un candidato\");
+        printf("5. Mostrar la informacion de los candidatos\n");
+        printf("0. Salir del menú candidatos\n");
+        
+        scanf("%d", &numero);
+        
+        switch (numero)
+        {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 0:
+                printf("Usted ha salido del menú candidatos\n");
+            default:
+                printf("Ingrese una opción valida\n");
+                break;
+        }
+    } while (numero)
+}
+
+void menuVotantes()
+{
+    int numero
+    
+    do
+    {
+        printf("Usted accedió al menú votantes\n");
+        printf("Seleccione la opción que desee\n");
+        printf("1. agregar un votante\n");
+        printf("2. buscar un votante\n");
+        printf("3. eliminar un votante\n");
+        printf("4. Modificar un votante\n");
+        printf("5. Mostrar la informacion de los votantes\n");
+        printf("0. Salir del menú votantes\n");
+        
+        scanf("%d", &numero);
+        
+        switch (numero)
+        {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 0:
+                printf("Usted ha salido del menú votantes\n");
+            default:
+                printf("Ingrese una opción valida\n");
+                break;
+        }
+    } while (numero)
+}
+
+
+
+void menuMesas()
+{
+    int numero
+    
+    do
+    {
+        printf("Usted accedió al menú mesas\n");
+        printf("Seleccione la opción que desee\n");
+        printf("1. agregar una mesa\n");
+        printf("2. buscar una mesa\n");
+        printf("3. eliminar una mesa\n");
+        printf("4. Modificar una mesa\n");
+        printf("5. Mostrar la informacion de las mesas\n");
+        printf("0. Salir del menú mesas\n");
+        
+        scanf("%d", &numero);
+        
+        switch (numero)
+        {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 0:
+                printf("Usted ha salido del menú mesas\n");
+            default:
+                printf("Ingrese una opción valida\n");
+                break;
+        }
+    } while (numero)
 }
 
 
