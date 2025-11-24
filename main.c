@@ -837,9 +837,10 @@ void menuCandidatos()
     } while (numero)
 }
 
-void menuVotantes()
+void menuVotantes(struct Mesa *mesa)
 {
-    int numero
+    int numero;
+    char aux[15];
     
     do
     {
@@ -853,65 +854,51 @@ void menuVotantes()
         printf("0. Salir del menú votantes\n");
         
         scanf("%d", &numero);
+        getchar();
         
         switch (numero)
         {
             case 1:
+                agregarVotante(&(mesa->votantes));   //doble puntero
                 break;
+            
             case 2:
+                printf("Ingrese el rut del votante buscado\n");
+                fgets(aux, sizeof(aux), stdin);
+                aux[strcspn(aux, "\n")] = '\0';    //elimina el salto de linea
+                buscarVotante(mesa->votantes, aux);
                 break;
+            
             case 3:
+                printf("Ingrese el rut del votante que desea eliminar\n");
+                fgets(aux, sizeof(aux), stdin);
+                aux[strcspn(aux, "\n")] = '\0';
+                eliminarVotante(&(mesa->votantes), aux);
                 break;
+            
             case 4:
+                printf("Ingrese el rut del votante que desea modificar\n");
+                fgets(aux, sizeof(aux), stdin);
+                aux[strcspn(aux, "\n")] = '\0';
+                modificarVotante(mesa->votantes, aux);
                 break;
+            
             case 5:
+                mostrarVotantes(mesa->votantes);
                 break;
+            
             case 0:
                 printf("Usted ha salido del menú votantes\n");
+            
             default:
                 printf("Ingrese una opción valida\n");
                 break;
         }
-    } while (numero)
+    } while (numero != 0);
 }
 
-void menuMesa()
-{
-    int numero
-    
-    do
-    {
-        printf("Usted accedió al menú mesas\n");
-        printf("Seleccione la opción que desee\n");
-        printf("1. agregar una mesa\n");
-        printf("2. buscar una mesa\n");
-        printf("3. eliminar una mesa\n");
-        printf("4. Modificar una mesa\n");
-        printf("5. Mostrar la informacion de las mesas\n");
-        printf("0. Salir del menú mesas\n");
-        
-        scanf("%d", &numero);
-        
-        switch (numero)
-        {
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            case 4:
-                break;
-            case 5:
-                break;
-            case 0:
-                printf("Usted ha salido del menú mesas\n");
-            default:
-                printf("Ingrese una opción valida\n");
-                break;
-        }
-    } while (numero)
-}
+
+
 
 int main()
 {
