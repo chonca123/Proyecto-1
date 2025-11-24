@@ -155,6 +155,41 @@ void agregarNodoEleccion(struct SistemaVotacion *sistema, struct NodoEleccion *n
     }
 }
 
+void agregarEleccion(struct SistemaVotacion *sistema)
+{
+    struct NodoEleccion *nuevoNodo;
+    struct Eleccion *nuevaEleccion;
+
+    nuevoNodo = nuevoNodoEleccion();
+    if (nuevoNodo == NULL)
+    {
+        mensajeEleccionError();
+        return;
+    }
+
+    nuevaEleccion = crearEleccion();
+    if (nuevaEleccion == NULL)
+    {
+        free(nuevoNodo);
+        return;
+    }
+
+    nuevoNodo->datosEleccion = nuevaEleccion;
+
+    agregarNodoEleccion(sistema, nuevoNodo);
+
+    mensajeEleccionAgregada();
+}
+
+void mensajeEleccionAgregada()
+{
+    printf("La elección fue agregada correctamente.\n");
+}
+
+void nuevoNodoEleccion(){
+    printf("No se agreego correctamente favor de intentar otra vez");
+}
+
 
 
 
