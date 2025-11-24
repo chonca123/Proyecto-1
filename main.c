@@ -192,88 +192,6 @@ void nuevoNodoEleccion(){
 
 
 
-
-//FUNCIONES CANDIDATO 
-
-struct TodosCandidatos *crearArregloCandidatos()
-{
-    struct TodosCandidatos *nuevo;
-    
-    nuevo = (struct TodosCandidatos *) malloc (sizeof(struct TodosCandidatos));   //creo un struct que mas adelante contendra un arreglo
-    nuevo->Candidatos = NULL;      //no tengo el arreglo todavia
-    nuevo->totalCandidatos = 0;
-    
-    return nuevo;
-}
-
-struct Candidato *crearCandidato()
-{
-    struct Candidato *nuevo;
-    
-    nuevo = (struct Candidato *) malloc (sizeof(struct Candidato));
-    
-    nuevo->rut[0] = '\0';
-    nuevo->NombreCandidato = NULL;
-    nuevo->nacionalidad[0] = '\0';
-    nuevo->edad = 0;
-    nuevo->PartidoPolitico = NULL;
-    nuevo->ProgramaGobierno = NULL;
-    nuevo->delitos = 0;
-    
-    return nuevo;
-}
-
-int contadorParaCandidatos()
-{
-    int edad, delito, contador = 0, bandera;
-    char nacionalidad[25];
-    
-    while (1)
-    {
-        printf("Ingrese edad del candidato");
-        scanf("%d", &edad);
-        if (edad >= 35)
-        {
-            printf("ingrese nacionalidad del candidato");
-            scanf(" %[^\n]", nacionalidad);
-            
-            if (strcmp(nacionalidad, "Chile") == 0 || strcmp(nacionalidad, "Chilena") == 0)   //y si lo ingresa con mayusculas en medio??
-            {
-                printf("Ingrese un 1 si el candidato no cuenta con antecedentes");
-                scanf("%d", &delito);
-                
-                if (delito == 1)
-                {
-                    contador += 1;
-                    printf("Su candidato ha sido aceptado");
-                }
-            }
-        }
-        printf("Su candidato no cumple con las condiciones para postularse");
-        printf("Ingrese un 0 si no desea agregar mas candidatos");
-        scanf("%d", &bandera);
-        if (bandera == 0)
-        {
-            return contador;
-        }
-    }
-}
-//previo a esto, confirmar si un candidato puede entrar o no a la lista
-void arregloFijo(struct TodosCandidatos *arreglo, int tamano)
-{
-    int i;
-    
-    arreglo->Candidatos = (struct Candidato **) malloc (tamano * sizeof(struct Candidato *));
-    arreglo->totalCandidatos = tamano;
-    
-    for (i = 0; i < tamano; i++)
-    {
-        arreglo->Candidatos[i] = crearCandidato();   //le doy espacios vacios a donde se ingresan los datos
-    }
-    
-}
-
-
 //FUNCIONES DE MESA 
 
 struct NodoMesa *crearNodoMesa()
@@ -606,60 +524,10 @@ void menuMesa(struct Eleccion *eleccion)
 }
 
 
-//FUNCIONES VOTANTE 
-
-struct NodoVotante *nuevoNodoVotante()
-{
-    struct NodoVotante *nuevo;
-    nuevo = (struct NodoVotante *) malloc (sizeof(struct NodoVotante));
-    nuevo->idVotante = 0;
-    nuevo->datosVotante = NULL;
-    nuevo->izq = NULL;
-    nuevo->der = NULL;
-    return nuevo;
-}
-
-struct Votante *crearVotante()
-{
-    struct Votante *nuevo;
-    nuevo = (struct Votante *) malloc (sizeof(struct Votante));
-    nuevo->voto = NULL;
-    nuevo->Nombre = NULL;
-    nuevo->edad = 0;
-    nuevo->nacionalidad[0] = '\0';
-    nuevo->rut[0] = '\0';
-    nuevo->paisResidencia[0] = '\0';
-    return nuevo;
-}
-
-void agregarNodoVotante(struct NodoVotante **raiz, struct NodoVotante *nuevo)
-{
-    if ((*raiz) == NULL)
-    {
-        (*raiz) = nuevo;
-        return;
-    }
-    else
-    {
-        //orden por edad
-        if ((*raiz)->datosVotante->edad < nuevo->datosVotante->edad)
-        {
-            agregarNodoVotante(&(*raiz)->izq, nuevo);
-        }
-        else
-        {
-            agregarNodoVotante(&(*raiz)->der, nuevo);
-        }
-    }
-}
 
 
 
-
-
-
-
-//Ingreso de datos para el sistema
+//SIRVEN O NO?
 void ingresoDeDatos(struct SistemaVotacion *sistema) 
 {
     //para usarlo como auxiliar y no desperdiciar memoria cuando quede todo guardado. este auxiliar se destruye al salir de la funcion
@@ -725,12 +593,6 @@ void ingresoDeDatosCandidatos(struct Candidato *espacio)
     scanf("%d", &espacio->delitos);
 }
 
-//esto tiene el ingreso si se deja esos datos de vocales estaticos, sino, se borra
-void ingresoDeDatosMesa()
-{
-    
-}
-
 void ingresoDeDatosVotante(struct Votante *estructura)
 {
     char aux[200];
@@ -756,8 +618,7 @@ void ingresoDeDatosVotante(struct Votante *estructura)
 
 
 
-//MENUS
-//sera necesario el de sistema??
+/*
 void menuSistemaVotacion()
 {
     int numero
@@ -833,7 +694,7 @@ void menuElecciones()
         }
     } while (numero)
 }
-
+*/
 
 
 //FUNCIONES CANDIDATO
@@ -1147,6 +1008,52 @@ void menuCandidatos(struct TodosCandidatos *lista)
 }
 
 //FUNCIONES VOTANTES
+
+struct NodoVotante *nuevoNodoVotante()
+{
+    struct NodoVotante *nuevo;
+    nuevo = (struct NodoVotante *) malloc (sizeof(struct NodoVotante));
+    nuevo->idVotante = 0;
+    nuevo->datosVotante = NULL;
+    nuevo->izq = NULL;
+    nuevo->der = NULL;
+    return nuevo;
+}
+
+struct Votante *crearVotante()
+{
+    struct Votante *nuevo;
+    nuevo = (struct Votante *) malloc (sizeof(struct Votante));
+    nuevo->voto = NULL;
+    nuevo->Nombre = NULL;
+    nuevo->edad = 0;
+    nuevo->nacionalidad[0] = '\0';
+    nuevo->rut[0] = '\0';
+    nuevo->paisResidencia[0] = '\0';
+    return nuevo;
+}
+
+void agregarNodoVotante(struct NodoVotante **raiz, struct NodoVotante *nuevo)
+{
+    if ((*raiz) == NULL)
+    {
+        (*raiz) = nuevo;
+        return;
+    }
+    else
+    {
+        //orden por edad
+        if ((*raiz)->datosVotante->edad < nuevo->datosVotante->edad)
+        {
+            agregarNodoVotante(&(*raiz)->izq, nuevo);
+        }
+        else
+        {
+            agregarNodoVotante(&(*raiz)->der, nuevo);
+        }
+    }
+}
+
 
 void agregarVotante(struct NodoVotante **raiz)
 {
