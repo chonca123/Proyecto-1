@@ -646,7 +646,7 @@ void menuVotantes()
 
 
 
-void menuMesas()
+void menuMesa()
 {
     int numero
     
