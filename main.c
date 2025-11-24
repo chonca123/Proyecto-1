@@ -239,8 +239,6 @@ void arregloFijo(struct TodosCandidatos *arreglo, int tamano)
 }
 
 
-
-
 //FUNCIONES DE MESA 
 
 struct NodoMesa *crearNodoMesa()
@@ -453,6 +451,125 @@ void imprimir_modificacion_fallida(int RUC)
 {
     printf("ERROR: No se encontro denuncia con el RUC %d.\n", RUC);
 }
+
+void listarMesas(struct Eleccion *eleccion)
+{
+    struct NodoMesa *rec;
+
+    rec = eleccion->listaMesas;
+
+    if (rec == NULL)
+    {
+        printf("No hay mesas registradas.\n");
+        return;
+    }
+
+    printf("\n----- LISTA DE MESAS -----\n");
+    while (rec != NULL)
+    {
+        printf("Mesa Padron: %d\n", rec->datosMesa->PadronMesa);
+        rec = rec->sig;
+    }
+}
+void menuMesa(struct Eleccion *eleccion) 
+{
+    int opcion;
+    int numero;
+    int nuevoNumero;
+    struct Mesa *mesa;
+
+    do 
+    {
+        printf("\n----- MENU MESAS -----\n");
+        printf("1. Agregar Mesa\n");
+        printf("2. Eliminar Mesa\n");
+        printf("3. Buscar Mesa\n");
+        printf("4. Modificar Mesa\n");
+        printf("5. Listar Mesas\n");
+        printf("0. Volver al menu principal\n");
+        printf("Seleccione una opcion: ");
+        scanf("%d", &opcion);
+
+        switch(opcion) 
+        {
+            case 1:
+                printf("Ingrese el numero de padron de la nueva mesa: ");
+                scanf("%d", &numero);
+
+                if (buscarMesa(eleccion, numero) != NULL)
+                {
+                    printf("ERROR: Ya existe una mesa con ese numero.\n");
+                }
+                else
+                {
+                    agregarMesa(eleccion);
+                }
+                break;
+
+            case 2:
+                printf("Ingrese el numero de padron de la mesa a eliminar: ");
+                scanf("%d", &numero);
+
+                eliminarMesa(eleccion, numero);
+                break;
+
+            case 3:
+                printf("Ingrese el numero de padron a buscar: ");
+                scanf("%d", &numero);
+
+                mesa = buscarMesa(eleccion, numero);
+
+                if (mesa != NULL)
+                {
+                    mostrarMesaEncontrada(mesa);
+                }
+                else
+                {
+                    mostrarMesaNoEncontrada();
+                }
+                break;
+
+            case 4:
+                printf("Ingrese el numero actual de la mesa: ");
+                scanf("%d", &numero);
+
+                mesa = buscarMesa(eleccion, numero);
+
+                if (mesa == NULL)
+                {
+                    printf("ERROR: La mesa no existe.\n");
+                }
+                else
+                {
+                    printf("Ingrese el nuevo numero de padron: ");
+                    scanf("%d", &nuevoNumero);
+
+                    if (buscarMesa(eleccion, nuevoNumero) != NULL)
+                    {
+                        printf("ERROR: Ese numero ya esta usado.\n");
+                    }
+                    else
+                    {
+                        mesa->PadronMesa = nuevoNumero;
+                        printf("Modificacion exitosa.\n");
+                    }
+                }
+                break;
+
+            case 5:
+                listarMesas(eleccion);
+                break;
+
+            case 0:
+                break;
+
+            default:
+                printf("Opcion invalida.\n");
+        }
+
+    } while(opcion != 0);
+}
+
 
 //FUNCIONES VOTANTE 
 
