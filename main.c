@@ -834,9 +834,251 @@ void menuElecciones()
     } while (numero)
 }
 
-void menuCandidatos()
+
+
+//FUNCIONES CANDIDATO
+
+struct TodosCandidatos *crearArregloCandidatos()
+{
+    struct TodosCandidatos *nuevo;
+    
+    nuevo = (struct TodosCandidatos *) malloc (sizeof(struct TodosCandidatos));   //creo un struct que mas adelante contendra un arreglo
+    nuevo->Candidatos = NULL;      //no tengo el arreglo todavia
+    nuevo->totalCandidatos = 0;
+    
+    return nuevo;
+}
+
+struct Candidato *crearCandidato()
+{
+    struct Candidato *nuevo;
+    
+    nuevo = (struct Candidato *) malloc (sizeof(struct Candidato));
+    
+    nuevo->rut[0] = '\0';
+    nuevo->NombreCandidato = NULL;
+    nuevo->nacionalidad[0] = '\0';
+    nuevo->edad = 0;
+    nuevo->PartidoPolitico = NULL;
+    nuevo->ProgramaGobierno = NULL;
+    nuevo->delitos = 0;
+    
+    return nuevo;
+}
+
+void arregloFijo(struct TodosCandidatos *arreglo, int tamano)
+{
+    int i;
+    
+    arreglo->Candidatos = (struct Candidato **) malloc (tamano * sizeof(struct Candidato *));
+    arreglo->totalCandidatos = tamano;
+    
+    for (i = 0; i < tamano; i++)
+    {
+        arreglo->Candidatos[i] = crearCandidato();  
+    }
+    
+}
+
+//esta funcion valida si un candidato que se quiere ingresar cumple con los requisitos o no
+int contadorParaCandidatos()
+{
+    int edad, delito, contador = 0, bandera;
+    char nacionalidad[25];
+    
+    while (1)
+    {
+        printf("Ingrese edad del candidato");
+        scanf("%d", &edad);
+        if (edad >= 35)
+        {
+            printf("ingrese nacionalidad del candidato");
+            scanf(" %[^\n]", nacionalidad);
+            
+            if (strcmp(nacionalidad, "Chile") == 0 || strcmp(nacionalidad, "Chilena") == 0)   //y si lo ingresa con mayusculas en medio??
+            {
+                printf("Ingrese un 1 si el candidato no cuenta con antecedentes");
+                scanf("%d", &delito);
+                
+                if (delito == 1)
+                {
+                    contador += 1;
+                    printf("Su candidato ha sido aceptado");
+                }
+            }
+        }
+        printf("Su candidato no cumple con las condiciones para postularse");
+        printf("Ingrese un 0 si no desea agregar mas candidatos");
+        scanf("%d", &bandera);
+        if (bandera == 0)
+        {
+            return contador;
+        }
+    }
+}
+
+
+void agregarCandidato(struct TodosCandidatos *lista, int tamano)
+{
+    struct Candidato *nuevo;
+    char aux[200];
+    
+    if (lista->totalCandidatos == tamano)
+    {
+        printf("No se pueden agregar mas candidatos.\n");
+        return;
+    }
+
+    nuevo = lista->Candidatos[lista->totalCandidatos];
+
+    printf("Ingrese el RUT del candidato: ");
+    fgets(aux,200,stdin); aux[strcspn(aux,"\n")] = '\0';
+    strcpy(nuevo->rut, aux);
+
+    printf("Ingrese nombre del candidato: ");
+    fgets(aux,200,stdin); aux[strcspn(aux,"\n")] = '\0';
+    nuevo->NombreCandidato = malloc(strlen(aux)+1);
+    strcpy(nuevo->NombreCandidato, aux);
+
+    printf("Ingrese nacionalidad del candidato: ");
+    fgets(aux,200,stdin); aux[strcspn(aux,"\n")] = '\nu';
+    strcpy(nuevo->Nacionalidad, aux);
+
+    printf("Ingrese edad del candidato: ");
+    scanf("%d", &nuevo->edad);
+    getchar();
+
+    printf("Ingrese partido político del candidato: ");
+    fgets(aux,200,stdin); aux[strcspn(aux,"\n")] = '\0';
+    nuevo->PartidoPolitico = malloc(strlen(aux)+1);
+    strcpy(nuevo->PartidoPolitico, aux);
+
+    printf("Ingrese programa de gobierno del candidato: ");
+    fgets(aux,200,stdin); aux[strcspn(aux,"\n")] = '\0';
+    nuevo->ProgramaGobierno = malloc(strlen(aux)+1);
+    strcpy(nuevo->ProgramaGobierno, aux);
+
+    printf("¿Tiene antecedentes? (1=SI / 0=NO): ");
+    scanf("%d", &nuevo->delitos);
+    getchar();
+
+    lista->totalCandidatos++; 
+}
+
+
+void buscarCandidato(struct TodosCandidatos *lista, char *rut, int largo)
+{
+    int i;
+    
+    for (i = 0; i < largo; i++)
+    {
+        if (lista[i] != NULL)
+        {
+            if (strcmp(lista[i]->rut, rut) == 0)
+            {
+                printf("Rut del candidato: %s\n", lista[i]->rut);
+                printf("Nombre del candidato: %s\n", lista[i]->NombreCandidato);
+                printf("Edad del candidato: %d\n", lista[i]->edad);
+                printf("Partido politico del candidato: %s\n", lista[i]->PartidoPolitico);
+                return;
+            }
+        }
+    }
+    printf("No se encontro ese candidato\n");
+}
+
+void compactarArreglo(struct TodosCandidatos *lista)
+{
+    int i, j = 0;
+
+    for (i = 0; i < lista->totalCandidatos; i++)
+    {
+        if (lista->Candidatos[i] != NULL)
+        {
+            lista->Candidatos[j] = lista->Candidatos[i];
+            j++;
+        }
+    }
+
+    for (; j < lista->totalCandidatos; j++)
+    {
+        lista->Candidatos[j] = NULL;
+    }
+}
+
+void eliminarCandidato(struct TodosCandidatos *lista, char *rut) 
+{
+    int i;
+    
+    for (i = 0; i < lista->totalCandidatos; i++)
+    {
+        if (lista->Candidatos[i] != NULL && strcmp(lista->Candidatos[i]->rut, rut) == 0)
+        {
+            free(lista->Candidatos[i]->NombreCandidato);
+            free(lista->Candidatos[i]->PartidoPolitico);
+            free(lista->Candidatos[i]->ProgramaGobierno);
+            free(lista->Candidatos[i]);  
+
+            lista->Candidatos[i] = NULL;  
+            printf("Candidato eliminado.\n");
+            return;
+        }
+    }
+    printf("No se encontró el candidato.\n");
+}
+
+
+void modificarCandidato(struct TodosCandidatos *lista, char *rut)
+{
+    int i;
+    char aux[200];
+
+    for (i = 0; i < lista->totalCandidatos; i++)
+    {
+        if (strcmp(lista->Candidatos[i]->rut, rut) == 0)
+        {
+            printf("Ingrese nuevo nombre del candidato: ");
+            fgets(aux,200,stdin); aux[strcspn(aux,"\n")] = '\0';
+            strcpy(lista->Candidatos[i]->NombreCandidato, aux);
+
+            printf("Ingrese nueva edad del candidato: ");
+            scanf("%d", &lista->Candidatos[i]->edad);
+            getchar();
+
+            
+            return;
+        }
+    }
+    printf("NO se encontró ese candidato.\n");
+}
+
+
+void mostrarCandidato(struct TodosCandidatos *lista, int largo)
+{
+    int i;
+    
+    for (i = 0; i < largo; i++)
+    {
+        if (lista[i] != NULL)
+        {
+            if (lista[i]->rut != NULL)
+            {
+                printf("Rut del candidato: %s\n", lista[i]->rut);
+                printf("Nombre del candidato: %s\n", lista[i]->NombreCandidato);
+                printf("Nacionalidad del candidato: %s\n", lista[i]->Nacionalidad);
+                printf("Edad del candidato: %d\n", lista[i]->edad);
+                printf("Partido politico del candidato: %s\n", lista[i]->PartidoPolitico);
+                printf("Programa de gobierno del candidato: %s\n", lista[i]->ProgramaGobierno);
+            }
+        }
+    }
+}
+
+
+void menuCandidatos(struct TodosCandidatos *lista)
 {
     int numero
+    char aux[15];
     
     do
     {
@@ -850,30 +1092,61 @@ void menuCandidatos()
         printf("0. Salir del menú candidatos\n");
         
         scanf("%d", &numero);
+        getchar();
         
         switch (numero)
         {
             case 1:
+                agregarCandidato(lista, lista->totalCandidatos);
                 break;
+                
             case 2:
+                printf("Ingrese rut del candidato a buscar\n");
+                fgets(aux, sizeof(aux), stdin);
+                aux[strcspn(aux, "\n")] = '\0';
+                buscarCandidato(lista, aux, lista->totalCandidatos);
                 break;
+                
             case 3:
+                printf("Ingrese rut del candidato a eliminar\n");
+                fgets(aux, sizeof(aux), stdin);
+                aux[strcspn(aux, "\n")] = '\0';
+
+                eliminarCandidato(lista, aux);   
+
+                printf("¿Desea compactar el arreglo? (1=Sí / 0=No): ");
+                scanf("%d", &numero);
+                getchar();
+
+                if (numero == 1)
+                {
+                    compactarArreglo(lista);
+                    printf("Arreglo compactado correctamente.\n");
+                }
                 break;
+
             case 4:
+                printf("Ingrese rut del candidato a modificar\n");
+                fgets(aux, sizeof(aux), stdin);
+                aux[strcspn(aux, "\n")] = '\0';
+                modificarCandidato(lista, aux, lista->totalCandidatos);
                 break;
+                
             case 5:
+                mostrarCandidato(lista, lista->totalCandidatos);
                 break;
+                
             case 0:
                 printf("Usted ha salido del menú candidatos\n");
+                
             default:
                 printf("Ingrese una opción valida\n");
                 break;
         }
-    } while (numero)
+    } while (numero != 0);
 }
 
-
-
+//FUNCIONES VOTANTES
 
 void agregarVotante(struct NodoVotante **raiz)
 {
