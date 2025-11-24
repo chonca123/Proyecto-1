@@ -549,13 +549,6 @@ void ingresoDeDatos(struct SistemaVotacion *sistema)
     scanf("%d %d %d", &sistema->FechaVotacion.dia, &sistema->FechaVotacion.mes, &sistema->FechaVotacion.anio);
 }
 
-void ingresoDeDatosEleccion(struct Eleccion *nodo)
-{
-    int numero;
-    
-    printf("Ingrese numero de vuelta de esta eleccion\n");
-    scanf("%d", &numero);
-}
 
 void ingresoDeDatosCandidatos(struct Candidato *espacio)
 {
@@ -593,70 +586,8 @@ void ingresoDeDatosCandidatos(struct Candidato *espacio)
     scanf("%d", &espacio->delitos);
 }
 
-void ingresoDeDatosVotante(struct Votante *estructura)
-{
-    char aux[200];
-    
-    printf("Ingrese el nombre del votante\n");
-    scanf(" %[^\n]", aux);
-    
-    estructura->Nombre = (char *) malloc ((strlen(aux) + 1) * sizeof(char));
-    strcpy(estructura->Nombre, aux);
-    
-    printf("Ingrese la edad del votante\n");
-    scanf("%d", estructura->edad);
-    
-    printf("Ingrese la nacionalidad del votante\n");
-    scanf(" %[^\n]", estructura->Nacionalidad);
-    
-    printf("Ingrese el rut del votante\n");
-    scanf(" %[^\n]", estructura->rut);
-    
-    printf("Ingrese el pais de residencia del votante\n");
-    scanf(" %[^\n]", estructura->paisResidencia);
-}
-
-
 
 /*
-void menuSistemaVotacion()
-{
-    int numero
-    
-    do
-    {
-        printf("Usted accedió al menú sistema de votacion\n");
-        printf("Seleccione la opción que desee\n");
-        printf("1. crear un sistema\n");
-        printf("2. buscar un sistema\n");
-        printf("3. eliminar un sistema\n");
-        printf("4. Modificar un sistema\n");
-        printf("5. Mostrar la informacion del sistema\n");
-        printf("0. Salir del menú sistema\n");
-        
-        scanf("%d", &numero);
-        
-        switch (numero)
-        {
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            case 4:
-                break;
-            case 5:
-                break;
-            case 0:
-                printf("Usted ha salido del menú sistema\n");
-            default:
-                printf("Ingrese una opción valida\n");
-                break;
-        }
-    } while (numero)
-}
-
 void menuElecciones()
 {
     int numero
