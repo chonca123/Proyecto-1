@@ -2,22 +2,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-/*solo comentarios asi en turbo C*/
+struct Fecha 
+{
+    int dia;
+    int mes;
+    int anio;
+};
 
-struct SistemaVotacion 
+struct SistemaVotacion    
 {
     struct NodoEleccion *elecciones;
     char *convocatoria;            
     struct Fecha registroCandidaturas;    
     struct Fecha FechaInicioCampana;
     struct Fecha FechaVotacion;
-};
-
-struct Fecha 
-{
-    int dia;
-    int mes;
-    int anio;
 };
 
 struct NodoEleccion 
@@ -35,7 +33,7 @@ struct Eleccion
 
 struct TodosCandidatos 
 {
-    struct Candidato **Candidatos;    //** porque es un arreglo de punteros a candidatos
+    struct Candidato **Candidatos;    
     int totalCandidatos;            
 };
 
@@ -47,7 +45,7 @@ struct Candidato
     int edad;                  
     char *PartidoPolitico;
     char *ProgramaGobierno;
-    int delitos;                //variable para confirmar si tiene delitos o no
+    int delitos;                
 };
 
 struct NodoMesa
@@ -59,7 +57,7 @@ struct NodoMesa
 struct Mesa
 {
     int PadronMesa;  
-    struct NodoVotante *votantes;  // lista interna, empieza NULL
+    struct NodoVotante *votantes;  
 };
 
 struct NodoVotante
@@ -80,16 +78,12 @@ struct Votante
 };
 
 
-//usar strlen para calcular el tamaño exacto del ingreso dinamico al agregar, se escanenan con auxiliares antes de todo
-
 //FUNCIONES SISTEMA INICIAL
 
 struct SistemaVotacion *nuevoSistema() 
 {
     struct SistemaVotacion *nueva;
     
-    //el malloc esta bien porque se devuelve un *, si estuviera en el main, no seria necesario, al igual que si estuviera como * en el main, ahi tambien se usa malloc
-    //junto a su uso en los nodos
     nueva = (struct SistemaVotacion *) malloc (sizeof(struct SistemaVotacion));
     printf("Sistema iniciado con valores en 0\n");
     nueva->elecciones = NULL;
@@ -155,40 +149,50 @@ void agregarNodoEleccion(struct SistemaVotacion *sistema, struct NodoEleccion *n
     }
 }
 
+
 void agregarEleccion(struct SistemaVotacion *sistema)
 {
     struct NodoEleccion *nuevoNodo;
     struct Eleccion *nuevaEleccion;
 
     nuevoNodo = nuevoNodoEleccion();
-    if (nuevoNodo == NULL)
+    nuevaEleccion = crearEleccion();
+
+    if (nuevoNodo == NULL || nuevaEleccion == NULL)
     {
-        mensajeEleccionError();
+        printf("ERROR al crear la eleccion.\n");
         return;
     }
 
-    nuevaEleccion = crearEleccion();
-    if (nuevaEleccion == NULL)
-    {
-        free(nuevoNodo);
-        return;
-    }
+    printf("Ingrese numero de vuelta (1 o 2): ");
+    scanf("%d", &nuevaEleccion->NumeroVuelta);
+    getchar();
 
     nuevoNodo->datosEleccion = nuevaEleccion;
-
     agregarNodoEleccion(sistema, nuevoNodo);
 
-    mensajeEleccionAgregada();
+    printf("Eleccion agregada correctamente.\n");
 }
 
-void mensajeEleccionAgregada()
+void listarElecciones(struct SistemaVotacion *sistema)
 {
-    printf("La elección fue agregada correctamente.\n");
+    struct NodoEleccion *rec = sistema->elecciones;
+
+    if (rec == NULL)
+    {
+        printf("No hay elecciones registradas.\n");
+        return;
+    }
+
+    printf("\n----- LISTA DE ELECCIONES -----\n");
+    while (rec != NULL)
+    {
+        printf("Numero de vuelta: %d\n", rec->datosEleccion->NumeroVuelta);
+        rec = rec->sig;
+    }
 }
 
-void nuevoNodoEleccion(){
-    printf("No se agreego correctamente favor de intentar otra vez");
-}
+
 
 
 
@@ -240,6 +244,20 @@ void agregarNodoMesa(struct Eleccion *eleccion, struct NodoMesa *nuevo)
     }
 }
 
+void mensajeMesaAgregada()
+{
+    printf("La mesa fue agregada correctamente.\n");
+}
+
+void cargarDatosMesa(struct Mesa *mesa)
+{
+    printf("Ingrese el numero de padron de la mesa: ");
+    scanf("%d", &mesa->PadronMesa);
+
+    mesa->votantes = NULL;
+}
+
+
 void agregarMesa(struct Eleccion *eleccion)
 {
     struct NodoMesa *nuevoNodo;
@@ -264,19 +282,6 @@ void agregarMesa(struct Eleccion *eleccion)
 
     agregarNodoMesa(eleccion, nuevoNodo);
     mensajeMesaAgregada();
-}
-
-void cargarDatosMesa(struct Mesa *mesa)
-{
-    printf("Ingrese el numero de padron de la mesa: ");
-    scanf("%d", &mesa->PadronMesa);
-
-    mesa->votantes = NULL;
-}
-
-void mensajeMesaAgregada()
-{
-    printf("La mesa fue agregada correctamente.\n");
 }
 
 
@@ -310,6 +315,16 @@ void mostrarMesaEncontrada(struct Mesa *mesa)
 void mostrarMesaNoEncontrada()
 {
     printf("No se encontro ninguna mesa con ese numero de padron.\n");
+}
+
+void mensajeMesaNoExiste()
+{
+    printf("No existe ninguna mesa con ese numero de padron.\n");
+}
+
+void mensajeMesaEliminada()
+{
+    printf("La mesa fue eliminada correctamente.\n");
 }
 
 int eliminarMesa(struct Eleccion *eleccion, int numeroBuscado)
@@ -348,62 +363,6 @@ int eliminarMesa(struct Eleccion *eleccion, int numeroBuscado)
     return 0;
 }
 
-void mensajeMesaEliminada()
-{
-    printf("La mesa fue eliminada correctamente.\n");
-}
-
-void mensajeMesaNoExiste()
-{
-    printf("No existe ninguna mesa con ese numero de padron.\n");
-}
-
-int modificarDenuncia(struct nodo_Denuncias *lista, int RUC, 
-                      const char *nuevoTipo, const char *nuevaDescripcion, int nuevaFecha)
-{
-    struct nodo_Denuncias *nodo;
-
-    if (lista == NULL || nuevoTipo == NULL || nuevaDescripcion == NULL)
-    {
-        imprimir_modificacion_fallida(RUC);
-        return -1;
-    }
-
-    nodo = buscarDenuncia(lista, RUC);
-
-    if (nodo == NULL)
-    {
-        imprimir_modificacion_fallida(RUC);
-        return -1;
-    }
-
-    strncpy(nodo->Denuncias->Tipo_denunciante, nuevoTipo, 
-            sizeof(nodo->Denuncias->Tipo_denunciante) - 1);
-    nodo->Denuncias->Tipo_denunciante[sizeof(nodo->Denuncias->Tipo_denunciante) - 1] = '\0';
-    
-    strncpy(nodo->Denuncias->descripcion, nuevaDescripcion, 
-            sizeof(nodo->Denuncias->descripcion) - 1);
-    nodo->Denuncias->descripcion[sizeof(nodo->Denuncias->descripcion) - 1] = '\0';
-
-    nodo->Denuncias->fecha = nuevaFecha;
-
-    imprimir_modificacion_exitosa(RUC, nuevoTipo, nuevaDescripcion, nuevaFecha);
-
-    return 1;
-}
-
-void imprimir_modificacion_exitosa(int RUC, const char *nuevoTipo, const char *nuevaDescripcion, int nuevaFecha)
-{
-    printf("Modificacion exitosa para RUC %d\n", RUC);
-    printf("Nuevo tipo: %s\n", nuevoTipo);
-    printf("Nueva descripcion: %s\n", nuevaDescripcion);
-    printf("Nueva fecha: %d\n", nuevaFecha);
-}
-
-void imprimir_modificacion_fallida(int RUC)
-{
-    printf("ERROR: No se encontro denuncia con el RUC %d.\n", RUC);
-}
 
 void listarMesas(struct Eleccion *eleccion)
 {
@@ -424,11 +383,10 @@ void listarMesas(struct Eleccion *eleccion)
         rec = rec->sig;
     }
 }
+
 void menuMesa(struct Eleccion *eleccion) 
 {
-    int opcion;
-    int numero;
-    int nuevoNumero;
+    int opcion, numero, nuevoNumero;
     struct Mesa *mesa;
 
     do 
@@ -442,12 +400,14 @@ void menuMesa(struct Eleccion *eleccion)
         printf("0. Volver al menu principal\n");
         printf("Seleccione una opcion: ");
         scanf("%d", &opcion);
+        getchar();
 
         switch(opcion) 
         {
             case 1:
                 printf("Ingrese el numero de padron de la nueva mesa: ");
                 scanf("%d", &numero);
+                getchar();
 
                 if (buscarMesa(eleccion, numero) != NULL)
                 {
@@ -514,6 +474,7 @@ void menuMesa(struct Eleccion *eleccion)
                 break;
 
             case 0:
+                printf("Regresando al menu principal\n");
                 break;
 
             default:
@@ -527,105 +488,123 @@ void menuMesa(struct Eleccion *eleccion)
 
 
 
-//SIRVEN O NO?
+
 void ingresoDeDatos(struct SistemaVotacion *sistema) 
 {
-    //para usarlo como auxiliar y no desperdiciar memoria cuando quede todo guardado. este auxiliar se destruye al salir de la funcion
     char linea[200];
-    
+
     printf("Ingrese el nombre de la convocatoria:\n");
-    scanf(" %[^\n]", linea);    //esto no compila en turbo C
-    
-    sistema->convocatoria = (char *) malloc ((strlen(linea) + 1) * sizeof(char));
+    fgets(linea, 200, stdin);                
+    linea[strcspn(linea, "\n")] = '\0';        
+
+    sistema->convocatoria = (char *) malloc((strlen(linea) + 1) * sizeof(char));
+    if (sistema->convocatoria == NULL)
+    {
+        printf("ERROR: No se pudo reservar memoria para convocatoria.\n");
+        return;
+    }
     strcpy(sistema->convocatoria, linea);
-    
-    printf("Ingrese fecha del registro de la candidatura (dia, mes y año)\n");
+
+    printf("Ingrese la fecha del registro de la candidatura (dia mes anio):\n");
     scanf("%d %d %d", &sistema->registroCandidaturas.dia, &sistema->registroCandidaturas.mes, &sistema->registroCandidaturas.anio);
+    getchar();  // limpia el ENTER
 
-    printf("Ingrese fecha inicio campaña (dia, mes y año): \n");
+    printf("Ingrese fecha de inicio de campaña (dia mes anio):\n");
     scanf("%d %d %d", &sistema->FechaInicioCampana.dia, &sistema->FechaInicioCampana.mes, &sistema->FechaInicioCampana.anio);
+    getchar();
 
-    printf("Ingrese fecha de votación (dia, mes y año): \n");
-    scanf("%d %d %d", &sistema->FechaVotacion.dia, &sistema->FechaVotacion.mes, &sistema->FechaVotacion.anio);
+    printf("Ingrese fecha de votación (dia mes anio):\n");
+    scanf("%d %d %d",&sistema->FechaVotacion.dia, &sistema->FechaVotacion.mes, &sistema->FechaVotacion.anio);
+    getchar();
+
+    printf("Datos del Sistema cargados correctamente.\n");
 }
+
+
+
 
 
 void ingresoDeDatosCandidatos(struct Candidato *espacio)
 {
-    int 
     char aux[200];
-    
-    printf("Ingrese el rut del candidato\n");
-    scanf(" %[^\n]", espacio->rut);
-    
-    printf("Ingrese el nombre del candidato\n");
-    scanf(" %[^\n]", aux);
-    
+
+    printf("Ingrese el RUT del candidato:\n");
+    fgets(aux, 200, stdin);
+    aux[strcspn(aux, "\n")] = '\0';
+    strcpy(espacio->Rut, aux);
+
+    printf("Ingrese el nombre del candidato:\n");
+    fgets(aux, 200, stdin);
+    aux[strcspn(aux, "\n")] = '\0';
     espacio->NombreCandidato = (char *) malloc ((strlen(aux) + 1) * sizeof(char));
     strcpy(espacio->NombreCandidato, aux);
-    
-    printf("Ingrese la nacionalidad del candidato\n");
-    scanf(" %[^\n]", espacio->nacionalidad);
-    
-    printf("Ingrese la edad del candidato\n");
+
+    printf("Ingrese la nacionalidad del candidato:\n");
+    fgets(aux, 200, stdin);
+    aux[strcspn(aux, "\n")] = '\0';
+    strcpy(espacio->Nacionalidad, aux);
+
+    printf("Ingrese la edad del candidato:\n");
     scanf("%d", &espacio->edad);
-    
-    printf("Ingrese el partido politico del candidato\n");
-    scanf(" %[^\n]", aux);
-    
-    espacio->PartidoPolitico = (char *) malloc ((strlen(aux) + 1) * sizeof(char));
+    getchar();   // limpia ENTER
+
+    printf("Ingrese el partido político del candidato:\n");
+    fgets(aux, 200, stdin);
+    aux[strcspn(aux, "\n")] = '\0';
+    espacio->PartidoPolitico = (char *) malloc((strlen(aux) + 1) * sizeof(char));
     strcpy(espacio->PartidoPolitico, aux);
-    
-    printf("Ingrese el programa de gobierno del candidato\n");
-    scanf(" %[^\n]", aux);
-    
-    espacio->ProgramaGobierno = (char *) malloc ((strlen(aux) + 1) * sizeof(char));
+
+    printf("Ingrese el programa de gobierno:\n");
+    fgets(aux, 200, stdin);
+    aux[strcspn(aux, "\n")] = '\0';
+    espacio->ProgramaGobierno = (char *) malloc((strlen(aux) + 1) * sizeof(char));
     strcpy(espacio->ProgramaGobierno, aux);
-    
-    printf("Ingrese un 1 si su candidato tiene antecedentes o un 0 si no los tiene\n");
+
+    printf("¿Tiene antecedentes? (1 = SÍ / 0 = NO):\n");
     scanf("%d", &espacio->delitos);
+    getchar();
+
+    printf("\nCandidato cargado correctamente.\n");
 }
 
 
-/*
-void menuElecciones()
+
+
+void menuElecciones(struct SistemaVotacion *sistema)
 {
-    int numero
-    
+    int opcion;
+
     do
     {
-        printf("Usted accedió al menú elecciones\n");
-        printf("Seleccione la opción que desee\n");
-        printf("1. agregar una eleccion\n");
-        printf("2. buscar una eleccion\n");
-        printf("3. eliminar una eleccion\n");
-        printf("4. Modificar una eleccion\n");
-        printf("5. Mostrar la informacion de la eleccion\n");
-        printf("0. Salir del menú elecciones\n");
-        
-        scanf("%d", &numero);
-        
-        switch (numero)
+        printf("\n----- MENU ELECCIONES -----\n");
+        printf("1. Agregar Eleccion\n");
+        printf("2. Listar Elecciones\n");
+        printf("0. Volver al menu principal\n");
+        printf("Seleccione una opcion: ");
+        scanf("%d", &opcion);
+        getchar();
+
+        switch(opcion)
         {
             case 1:
+                agregarEleccion(sistema);   
                 break;
+
             case 2:
+                listarElecciones(sistema); 
                 break;
-            case 3:
-                break;
-            case 4:
-                break;
-            case 5:
-                break;
+
             case 0:
-                printf("Usted ha salido del menú elecciones\n");
-            default:
-                printf("Ingrese una opción valida\n");
+                printf("Regresando al menu principal\n");
                 break;
+
+            default:
+                printf("Opcion invalida.\n");
         }
-    } while (numero)
+
+    } while(opcion != 0);
 }
-*/
+
 
 
 //FUNCIONES CANDIDATO
@@ -647,9 +626,9 @@ struct Candidato *crearCandidato()
     
     nuevo = (struct Candidato *) malloc (sizeof(struct Candidato));
     
-    nuevo->rut[0] = '\0';
+    nuevo->Rut[0] = '\0';
     nuevo->NombreCandidato = NULL;
-    nuevo->nacionalidad[0] = '\0';
+    nuevo->Nacionalidad[0] = '\0';
     nuevo->edad = 0;
     nuevo->PartidoPolitico = NULL;
     nuevo->ProgramaGobierno = NULL;
@@ -672,48 +651,12 @@ void arregloFijo(struct TodosCandidatos *arreglo, int tamano)
     
 }
 
-//esta funcion valida si un candidato que se quiere ingresar cumple con los requisitos o no
-int contadorParaCandidatos()
-{
-    int edad, delito, contador = 0, bandera;
-    char nacionalidad[25];
-    
-    while (1)
-    {
-        printf("Ingrese edad del candidato");
-        scanf("%d", &edad);
-        if (edad >= 35)
-        {
-            printf("ingrese nacionalidad del candidato");
-            scanf(" %[^\n]", nacionalidad);
-            
-            if (strcmp(nacionalidad, "Chile") == 0 || strcmp(nacionalidad, "Chilena") == 0)   //y si lo ingresa con mayusculas en medio??
-            {
-                printf("Ingrese un 1 si el candidato no cuenta con antecedentes");
-                scanf("%d", &delito);
-                
-                if (delito == 1)
-                {
-                    contador += 1;
-                    printf("Su candidato ha sido aceptado");
-                }
-            }
-        }
-        printf("Su candidato no cumple con las condiciones para postularse");
-        printf("Ingrese un 0 si no desea agregar mas candidatos");
-        scanf("%d", &bandera);
-        if (bandera == 0)
-        {
-            return contador;
-        }
-    }
-}
-
 
 void agregarCandidato(struct TodosCandidatos *lista, int tamano)
 {
     struct Candidato *nuevo;
     char aux[200];
+    int edad, delitos;
     
     if (lista->totalCandidatos == tamano)
     {
@@ -721,41 +664,64 @@ void agregarCandidato(struct TodosCandidatos *lista, int tamano)
         return;
     }
 
-    nuevo = lista->Candidatos[lista->totalCandidatos];
+    printf("Ingrese edad del candidato: ");
+    scanf("%d", &edad);
+    getchar();
 
-    printf("Ingrese el RUT del candidato: ");
-    fgets(aux,200,stdin); aux[strcspn(aux,"\n")] = '\0';
-    strcpy(nuevo->rut, aux);
+    if (edad < 35)
+    {
+        printf("ERROR: Debe tener 35 años o más.\n");
+        return;
+    }
+
+    printf("Ingrese nacionalidad del candidato: ");
+    fgets(aux, 200, stdin);
+    aux[strcspn(aux, "\n")] = '\0';
+
+    if (strcmp(aux, "Chile") != 0 && strcmp(aux, "Chilena") != 0)
+    {
+        printf("ERROR: Debe ser chileno de nacimiento.\n");
+        return;
+    }
+
+    printf("¿Tiene antecedentes? (1=SI / 0=NO): ");
+    scanf("%d", &delitos);
+    getchar();
+
+    if (delitos != 0)
+    {
+        printf("ERROR: No puede tener antecedentes.\n");
+        return;
+    }
+
+
+    nuevo = lista->Candidatos[lista->totalCandidatos];
+    nuevo->edad = edad;
+
+    strcpy(nuevo->Nacionalidad, aux);
 
     printf("Ingrese nombre del candidato: ");
-    fgets(aux,200,stdin); aux[strcspn(aux,"\n")] = '\0';
+    fgets(aux, 200, stdin);
+    aux[strcspn(aux, "\n")] = '\0';
     nuevo->NombreCandidato = malloc(strlen(aux)+1);
     strcpy(nuevo->NombreCandidato, aux);
 
-    printf("Ingrese nacionalidad del candidato: ");
-    fgets(aux,200,stdin); aux[strcspn(aux,"\n")] = '\nu';
-    strcpy(nuevo->Nacionalidad, aux);
-
-    printf("Ingrese edad del candidato: ");
-    scanf("%d", &nuevo->edad);
-    getchar();
-
     printf("Ingrese partido político del candidato: ");
-    fgets(aux,200,stdin); aux[strcspn(aux,"\n")] = '\0';
+    fgets(aux, 200, stdin);
+    aux[strcspn(aux, "\n")] = '\0';
     nuevo->PartidoPolitico = malloc(strlen(aux)+1);
     strcpy(nuevo->PartidoPolitico, aux);
 
-    printf("Ingrese programa de gobierno del candidato: ");
-    fgets(aux,200,stdin); aux[strcspn(aux,"\n")] = '\0';
+    printf("Ingrese programa de gobierno: ");
+    fgets(aux, 200, stdin);
+    aux[strcspn(aux, "\n")] = '\0';
     nuevo->ProgramaGobierno = malloc(strlen(aux)+1);
     strcpy(nuevo->ProgramaGobierno, aux);
 
-    printf("¿Tiene antecedentes? (1=SI / 0=NO): ");
-    scanf("%d", &nuevo->delitos);
-    getchar();
-
-    lista->totalCandidatos++; 
+    lista->totalCandidatos++;
+    printf("\nCandidato agregado correctamente.\n");
 }
+
 
 
 void buscarCandidato(struct TodosCandidatos *lista, char *rut, int largo)
@@ -764,14 +730,14 @@ void buscarCandidato(struct TodosCandidatos *lista, char *rut, int largo)
     
     for (i = 0; i < largo; i++)
     {
-        if (lista[i] != NULL)
+        if (lista->Candidatos[i] != NULL)
         {
-            if (strcmp(lista[i]->rut, rut) == 0)
+            if (strcmp(lista->Candidatos[i]->Rut, rut) == 0)
             {
-                printf("Rut del candidato: %s\n", lista[i]->rut);
-                printf("Nombre del candidato: %s\n", lista[i]->NombreCandidato);
-                printf("Edad del candidato: %d\n", lista[i]->edad);
-                printf("Partido politico del candidato: %s\n", lista[i]->PartidoPolitico);
+                printf("Rut del candidato: %s\n", lista->Candidatos[i]->Rut);
+                printf("Nombre del candidato: %s\n", lista->Candidatos[i]->NombreCandidato);
+                printf("Edad del candidato: %d\n", lista->Candidatos[i]->edad);
+                printf("Partido politico del candidato: %s\n", lista->Candidatos[i]->PartidoPolitico);
                 return;
             }
         }
@@ -804,7 +770,7 @@ void eliminarCandidato(struct TodosCandidatos *lista, char *rut)
     
     for (i = 0; i < lista->totalCandidatos; i++)
     {
-        if (lista->Candidatos[i] != NULL && strcmp(lista->Candidatos[i]->rut, rut) == 0)
+        if (lista->Candidatos[i] != NULL && strcmp(lista->Candidatos[i]->Rut, rut) == 0)
         {
             free(lista->Candidatos[i]->NombreCandidato);
             free(lista->Candidatos[i]->PartidoPolitico);
@@ -827,22 +793,31 @@ void modificarCandidato(struct TodosCandidatos *lista, char *rut)
 
     for (i = 0; i < lista->totalCandidatos; i++)
     {
-        if (strcmp(lista->Candidatos[i]->rut, rut) == 0)
+        if (lista->Candidatos[i] != NULL && strcmp(lista->Candidatos[i]->Rut, rut) == 0)
         {
-            printf("Ingrese nuevo nombre del candidato: ");
-            fgets(aux,200,stdin); aux[strcspn(aux,"\n")] = '\0';
+            printf("Ingrese nuevo nombre: ");
+            fgets(aux, sizeof(aux), stdin);
+            aux[strcspn(aux, "\n")] = '\0';
+
+            if (lista->Candidatos[i]->NombreCandidato != NULL)
+            {
+                free(lista->Candidatos[i]->NombreCandidato);
+            }
+
+            lista->Candidatos[i]->NombreCandidato = (char *) malloc((strlen(aux) + 1) * sizeof (char));
             strcpy(lista->Candidatos[i]->NombreCandidato, aux);
 
-            printf("Ingrese nueva edad del candidato: ");
+            printf("Ingrese nueva edad: ");
             scanf("%d", &lista->Candidatos[i]->edad);
             getchar();
 
-            
+            printf("Candidato modificado correctamente.\n");
             return;
         }
     }
-    printf("NO se encontró ese candidato.\n");
+    printf("No se encontró ese candidato.\n");
 }
+
 
 
 void mostrarCandidato(struct TodosCandidatos *lista, int largo)
@@ -851,16 +826,16 @@ void mostrarCandidato(struct TodosCandidatos *lista, int largo)
     
     for (i = 0; i < largo; i++)
     {
-        if (lista[i] != NULL)
+        if (lista->Candidatos[i] != NULL)
         {
-            if (lista[i]->rut != NULL)
+            if (lista->Candidatos[i]->Rut != NULL)
             {
-                printf("Rut del candidato: %s\n", lista[i]->rut);
-                printf("Nombre del candidato: %s\n", lista[i]->NombreCandidato);
-                printf("Nacionalidad del candidato: %s\n", lista[i]->Nacionalidad);
-                printf("Edad del candidato: %d\n", lista[i]->edad);
-                printf("Partido politico del candidato: %s\n", lista[i]->PartidoPolitico);
-                printf("Programa de gobierno del candidato: %s\n", lista[i]->ProgramaGobierno);
+                printf("Rut del candidato: %s\n", lista->Candidatos[i]->Rut);
+                printf("Nombre del candidato: %s\n", lista->Candidatos[i]->NombreCandidato);
+                printf("Nacionalidad del candidato: %s\n", lista->Candidatos[i]->Nacionalidad);
+                printf("Edad del candidato: %d\n", lista->Candidatos[i]->edad);
+                printf("Partido politico del candidato: %s\n", lista->Candidatos[i]->PartidoPolitico);
+                printf("Programa de gobierno del candidato: %s\n", lista->Candidatos[i]->ProgramaGobierno);
             }
         }
     }
@@ -869,7 +844,7 @@ void mostrarCandidato(struct TodosCandidatos *lista, int largo)
 
 void menuCandidatos(struct TodosCandidatos *lista)
 {
-    int numero
+    int numero;
     char aux[15];
     
     do
@@ -879,7 +854,7 @@ void menuCandidatos(struct TodosCandidatos *lista)
         printf("1. agregar un candidato\n");
         printf("2. buscar un candidato\n");
         printf("3. eliminar un candidato\n");
-        printf("4. Modificar un candidato\");
+        printf("4. Modificar un candidato\n");
         printf("5. Mostrar la informacion de los candidatos\n");
         printf("0. Salir del menú candidatos\n");
         
@@ -921,7 +896,7 @@ void menuCandidatos(struct TodosCandidatos *lista)
                 printf("Ingrese rut del candidato a modificar\n");
                 fgets(aux, sizeof(aux), stdin);
                 aux[strcspn(aux, "\n")] = '\0';
-                modificarCandidato(lista, aux, lista->totalCandidatos);
+                modificarCandidato(lista, aux);
                 break;
                 
             case 5:
@@ -930,6 +905,7 @@ void menuCandidatos(struct TodosCandidatos *lista)
                 
             case 0:
                 printf("Usted ha salido del menú candidatos\n");
+                break;
                 
             default:
                 printf("Ingrese una opción valida\n");
@@ -958,7 +934,7 @@ struct Votante *crearVotante()
     nuevo->voto = NULL;
     nuevo->Nombre = NULL;
     nuevo->edad = 0;
-    nuevo->nacionalidad[0] = '\0';
+    nuevo->Nacionalidad[0] = '\0';
     nuevo->rut[0] = '\0';
     nuevo->paisResidencia[0] = '\0';
     return nuevo;
@@ -973,7 +949,6 @@ void agregarNodoVotante(struct NodoVotante **raiz, struct NodoVotante *nuevo)
     }
     else
     {
-        //orden por edad
         if ((*raiz)->datosVotante->edad < nuevo->datosVotante->edad)
         {
             agregarNodoVotante(&(*raiz)->izq, nuevo);
@@ -1056,6 +1031,8 @@ int buscarVotante(struct NodoVotante *raiz, char *rut)
 
 struct NodoVotante* eliminarVotante(struct NodoVotante *raiz, char *rut)
 {
+    struct NodoVotante *temp;
+    
     if (raiz == NULL)
     {
         return NULL;
@@ -1072,21 +1049,21 @@ struct NodoVotante* eliminarVotante(struct NodoVotante *raiz, char *rut)
         }
 
         if (raiz->izq == NULL) {
-            struct NodoVotante *temp = raiz->der;
+            temp = raiz->der;
             free(raiz->datosVotante->Nombre);
             free(raiz->datosVotante);
             free(raiz);
             return temp;
         }
         if (raiz->der == NULL) {
-            struct NodoVotante *temp = raiz->izq;
+            temp = raiz->izq;
             free(raiz->datosVotante->Nombre);
             free(raiz->datosVotante);
             free(raiz);
             return temp;
         }
         
-        struct NodoVotante *temp = raiz->der;
+        temp = raiz->der;
         while (temp->izq != NULL)
             temp = temp->izq;
 
@@ -1231,6 +1208,7 @@ void menuVotantes(struct Mesa *mesa)
             
             case 0:
                 printf("Usted ha salido del menú votantes\n");
+                break;
             
             default:
                 printf("Ingrese una opción valida\n");
@@ -1244,7 +1222,6 @@ void menuVotantes(struct Mesa *mesa)
 
 int main()
 {
-    //Va o no sistema??
     struct SistemaVotacion *sistema;
     int opcion;
     
@@ -1258,11 +1235,10 @@ int main()
         printf("\n==========================================\n");
         printf("\nBienvenido a nuestra paguina web\n");
         printf("Por favor seleccione la opcion que desea utilizar\n");
-        printf("1. SistemaVotacion\n");
-        printf("2. Eleccion\n");
-        printf("3. Candidato\n");
-        printf("4. Mesa\n");
-        printf("5. Votante\n");
+        printf("1. Eleccion\n");
+        printf("2. Candidato\n");
+        printf("3. Mesa\n");
+        printf("4. Votante\n");
         printf("0. Salir\n");
         printf("Seleccione una opcion: ");
 
@@ -1276,26 +1252,61 @@ int main()
         switch(opcion) 
         {
             case 1:
-                menuSistemaVotacion();
+                menuElecciones(sistema);
                 break;
+            
             case 2:
-                menuElecciones();
+                if (sistema->elecciones == NULL)
+                {
+                    printf("ERROR: Primero debe agregar una eleccion.\n");
+                }
+                else
+                {
+                    menuCandidatos(sistema->elecciones->datosEleccion->listaCandidatos);
+                }
                 break;
+            
             case 3:
-                menuCandidatos();
+                if (sistema->elecciones == NULL)
+                {
+                    printf("ERROR: No hay elecciones registradas.\n");
+                }
+                else if (sistema->elecciones->datosEleccion->listaMesas == NULL)
+                {
+                    printf("ERROR: No hay mesas registradas en esta eleccion.\n");
+                }
+                else
+                {
+                    menuMesa(sistema->elecciones->datosEleccion);
+                }
                 break;
+            
             case 4:
-                menuMesa();
+                if (sistema->elecciones == NULL)
+                {
+                    printf("ERROR: No hay elecciones registradas.\n");
+                }
+                else if (sistema->elecciones->datosEleccion->listaMesas == NULL)
+                {
+                    printf("ERROR: No hay mesas registradas.\n");
+                }
+                else if (sistema->elecciones->datosEleccion->listaMesas->datosMesa->votantes == NULL)
+                {
+                    printf("ERROR: No hay votantes registrados en esta mesa.\n");
+                }
+                else
+                {
+                    menuVotantes(sistema->elecciones->datosEleccion->listaMesas->datosMesa);
+                }
                 break;
-            case 5:
-                menuVotantes();
-                break;
+            
             case 0:
                 printf("Saliendo del sistema...\n");
                 break;
+            
             default:
                 printf("Opcion invalida. Intente de nuevo.\n");
         }
-    } while (opcion != (-1));           
+    } while (opcion != 0);           
     return 0;
 }
