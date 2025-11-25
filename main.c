@@ -650,15 +650,6 @@ void ingresoDeDatosCandidatos(struct Candidato *espacio)
     espacio->NombreCandidato = (char *) malloc ((strlen(aux) + 1) * sizeof(char));
     strcpy(espacio->NombreCandidato, aux);
 
-    printf("Ingrese la nacionalidad del candidato:\n");
-    fgets(aux, 200, stdin);
-    aux[strcspn(aux, "\n")] = '\0';
-    strcpy(espacio->Nacionalidad, aux);
-
-    printf("Ingrese la edad del candidato:\n");
-    scanf("%d", &espacio->edad);
-    getchar();   // limpia ENTER
-
     printf("Ingrese el partido político del candidato:\n");
     fgets(aux, 200, stdin);
     aux[strcspn(aux, "\n")] = '\0';
@@ -670,10 +661,6 @@ void ingresoDeDatosCandidatos(struct Candidato *espacio)
     aux[strcspn(aux, "\n")] = '\0';
     espacio->ProgramaGobierno = (char *) malloc((strlen(aux) + 1) * sizeof(char));
     strcpy(espacio->ProgramaGobierno, aux);
-
-    printf("¿Tiene antecedentes? (1 = SÍ / 0 = NO):\n");
-    scanf("%d", &espacio->delitos);
-    getchar();
 
     printf("\nCandidato cargado correctamente.\n");
 }
@@ -791,7 +778,7 @@ void agregarCandidato(struct TodosCandidatos *lista)
     fgets(aux, 200, stdin);
     aux[strcspn(aux, "\n")] = '\0';
 
-    if (strcmp(aux, "Chile") != 0 && strcmp(aux, "Chilena") != 0)
+    if (strcmp(aux, "Chile") != 0 && strcmp(aux, "chile") != 0)
     {
         printf("ERROR: Debe ser chileno de nacimiento.\n");
         return;
@@ -807,32 +794,27 @@ void agregarCandidato(struct TodosCandidatos *lista)
         return;
     }
 
-
     nuevo = lista->Candidatos[lista->usados];
+    
+    if (nuevo == NULL) 
+    {
+        nuevo = crearCandidato();
+        if (nuevo == NULL) 
+        {
+             printf("ERROR: No se pudo asignar memoria para el nuevo candidato.\n");
+             return;
+        }
+        lista->Candidatos[lista->usados] = nuevo; 
+    }
+    
     nuevo->edad = edad;
-
+    
     strcpy(nuevo->Nacionalidad, aux);
+    nuevo->delitos = delitos; 
 
-    printf("Ingrese nombre del candidato: ");
-    fgets(aux, 200, stdin);
-    aux[strcspn(aux, "\n")] = '\0';
-    nuevo->NombreCandidato = malloc(strlen(aux)+1);
-    strcpy(nuevo->NombreCandidato, aux);
-
-    printf("Ingrese partido político del candidato: ");
-    fgets(aux, 200, stdin);
-    aux[strcspn(aux, "\n")] = '\0';
-    nuevo->PartidoPolitico = malloc(strlen(aux)+1);
-    strcpy(nuevo->PartidoPolitico, aux);
-
-    printf("Ingrese programa de gobierno: ");
-    fgets(aux, 200, stdin);
-    aux[strcspn(aux, "\n")] = '\0';
-    nuevo->ProgramaGobierno = malloc(strlen(aux)+1);
-    strcpy(nuevo->ProgramaGobierno, aux);
+    ingresoDeDatosCandidatos(nuevo); 
 
     lista->usados++;
-    printf("\nCandidato agregado correctamente.\n");
 }
 
 
@@ -1436,10 +1418,6 @@ int main()
                 {
                     printf("ERROR: No hay elecciones registradas.\n");
                 }
-                else if (sistema->elecciones->datosEleccion->listaMesas == NULL)
-                {
-                    printf("ERROR: No hay mesas registradas en esta eleccion.\n");
-                }
                 else
                 {
                     menuMesa(sistema->elecciones->datosEleccion);
@@ -1454,10 +1432,6 @@ int main()
                 else if (sistema->elecciones->datosEleccion->listaMesas == NULL)
                 {
                     printf("ERROR: No hay mesas registradas.\n");
-                }
-                else if (sistema->elecciones->datosEleccion->listaMesas->datosMesa->votantes == NULL)
-                {
-                    printf("ERROR: No hay votantes registrados en esta mesa.\n");
                 }
                 else
                 {
