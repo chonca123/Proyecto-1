@@ -46,7 +46,8 @@ struct Candidato
     int edad;                  
     char *PartidoPolitico;
     char *ProgramaGobierno;
-    int delitos;                
+    int delitos;    
+    int votos;
 };
 
 struct NodoMesa
@@ -80,16 +81,14 @@ struct Votante
     char paisResidencia[25];
 };
 
-// ===================================
-// PROTOTIPOS DE FUNCIONES (NECESARIO PARA TURBO C)
-// ===================================
-
 // Funciones Elección
 struct NodoEleccion *nuevoNodoEleccion();
 struct Eleccion *crearEleccion();
 void agregarNodoEleccion(struct SistemaVotacion *sistema, struct NodoEleccion *nodo);
 void agregarEleccion(struct SistemaVotacion *sistema);
 void listarElecciones(struct SistemaVotacion *sistema);
+void calcularParticipacion(struct Eleccion *eleccion);
+void contarVotosPorCandidato(struct Eleccion *eleccion);
 
 // Funciones Candidato
 struct TodosCandidatos *crearArregloCandidatos();
@@ -101,6 +100,7 @@ void compactarArreglo(struct TodosCandidatos *lista);
 void eliminarCandidato(struct TodosCandidatos *lista, char *rut);
 void modificarCandidato(struct TodosCandidatos *lista, char *rut);
 void mostrarCandidato(struct TodosCandidatos *lista);
+void ordenarCandidatosBurbuja(struct TodosCandidatos *lista);
 void menuCandidatos(struct TodosCandidatos *lista);
 void ingresoDeDatosCandidatos(struct Candidato *espacio);
 
@@ -117,7 +117,7 @@ void menuMesa(struct Eleccion *eleccion);
 // Funciones Votante
 struct NodoVotante *nuevoNodoVotante();
 struct Votante *crearVotante();
-struct NodoVotante* minimoNodo(struct NodoVotante* nodo); // FUNCIÓN FALTANTE
+struct NodoVotante* minimoNodo(struct NodoVotante* nodo); 
 void agregarNodoVotante(struct NodoVotante **raiz, struct NodoVotante *nuevo);
 struct NodoVotante* buscarNodoVotante(struct NodoVotante *raiz, char *rut);
 void agregarVotante(struct NodoVotante **raiz);
@@ -127,7 +127,6 @@ void modificarVotante(struct NodoVotante *raiz, char *rut);
 void mostrarVotantes(struct NodoVotante *raiz);
 void liberarArbolVotantes(struct NodoVotante *raiz);
 void menuVotantes(struct Mesa *mesa);
-// ... (otras funciones como nuevoSistema, ingresoDeDatos, etc.)
 
 
 //FUNCIONES SISTEMA INICIAL
@@ -156,10 +155,7 @@ struct SistemaVotacion *nuevoSistema()
     return nueva;
 }
 
-//estos creados son los modelos vacios de cada estructura, listos para recibir datos
-
-//retorno un puntero que apunta a ese nuevo nodo creado, por lo que despues lo puedo pasar para ingresar datos sin recorrer
-struct NodoEleccion *nuevoNodoEleccion()   //no estoy modificando nada, estoy agregando
+struct NodoEleccion *nuevoNodoEleccion()  
 {
     struct NodoEleccion *nuevo;
     
@@ -217,7 +213,7 @@ void agregarEleccion(struct SistemaVotacion *sistema)
         return;
     }
 
-    printf("Ingrese numero de vuelta (1 o 2): ");
+    printf("Ingrese numero de vuelta: ");
     scanf("%d", &nuevaEleccion->NumeroVuelta);
     getchar();
     
@@ -233,6 +229,66 @@ void agregarEleccion(struct SistemaVotacion *sistema)
     printf("Eleccion agregada correctamente.\n");
 }
 
+void calcularParticipacion(struct Eleccion *eleccion)
+{
+    struct NodoMesa *rec;
+    int totalMesas = 0;
+    int totalVotantes = 0;
+
+    rec = eleccion->listaMesas;
+    if (rec == NULL)
+    {
+        printf("ERROR: No hay mesas registradas para calcular la participación.\n");
+        return;
+    }
+
+    printf("\n==== PARTICIPACIÓN ELECTORAL ====\n");
+    
+    while (rec != NULL)
+    {
+        totalMesas++;
+        totalVotantes += rec->datosMesa->CantVotantesEnMesa;
+        
+        printf("Mesa %d (Local: %s): %d votantes\n", 
+               rec->datosMesa->PadronMesa, 
+               rec->datosMesa->LocalVotacion, 
+               rec->datosMesa->CantVotantesEnMesa);
+               
+        rec = rec->sig;
+    }
+
+    printf("--------------------------------\n");
+    printf("Total de mesas revisadas: %d\n", totalMesas);
+    printf("Total de votantes registrados: %d\n", totalVotantes);
+    printf("================================\n");
+}
+
+// FUNCIÓN EXTRA 2: CONTEO DE VOTOS
+void contarVotosPorCandidato(struct Eleccion *eleccion)
+{
+    int i;
+    struct TodosCandidatos *lista = eleccion->listaCandidatos;
+
+    if (lista == NULL || lista->usados == 0)
+    {
+        printf("ERROR: No hay candidatos registrados para contar votos.\n");
+        return;
+    }
+
+    printf("\n==== RESULTADOS PRELIMINARES DE LA ELECCIÓN ====\n");
+    printf("%-20s | %-15s | %s\n", "Candidato", "Partido", "Votos Totales");
+    printf("--------------------------------------------------\n");
+
+    for (i = 0; i < lista->usados; i++)
+    {
+        if (lista->Candidatos[i] != NULL)
+        {
+            printf("%-20s | %-15s | %d\n", lista->Candidatos[i]->NombreCandidato, lista->Candidatos[i]->PartidoPolitico, lista->Candidatos[i]->votos); // Muestra el conteo de votos
+        }
+    }
+    printf("==================================================\n");
+}
+
 void listarElecciones(struct SistemaVotacion *sistema)
 {
     struct NodoEleccion *rec = sistema->elecciones;
@@ -243,7 +299,7 @@ void listarElecciones(struct SistemaVotacion *sistema)
         return;
     }
 
-    printf("\n----- LISTA DE ELECCIONES -----\n");
+    printf("----- LISTA DE ELECCIONES -----\n");
     while (rec != NULL)
     {
         printf("Numero de vuelta: %d\n", rec->datosEleccion->NumeroVuelta);
@@ -732,6 +788,7 @@ struct Candidato *crearCandidato()
     nuevo->PartidoPolitico = NULL;
     nuevo->ProgramaGobierno = NULL;
     nuevo->delitos = 0;
+    nuevo->votos = 0;
     
     return nuevo;
 }
@@ -938,6 +995,34 @@ void mostrarCandidato(struct TodosCandidatos *lista)
     }
 }
 
+void ordenarCandidatosBurbuja(struct TodosCandidatos *lista)
+{
+    int i, j;
+    struct Candidato *temp;
+
+    if (lista->usados <= 1)
+    {
+        printf("No hay suficientes candidatos para ordenar.\n");
+        return;
+    }
+
+    printf("Ordenando candidatos por RUT (Algoritmo de Burbuja)...\n");
+
+    for (i = 0; i < lista->usados - 1; i++)
+    {
+        for (j = 0; j < lista->usados - 1 - i; j++)
+        {
+            if (strcmp(lista->Candidatos[j]->Rut, lista->Candidatos[j + 1]->Rut) > 0)
+            {
+                temp = lista->Candidatos[j];
+                lista->Candidatos[j] = lista->Candidatos[j + 1];
+                lista->Candidatos[j + 1] = temp;
+            }
+        }
+    }
+    printf("Ordenamiento completado.\n");
+}
+
 
 void menuCandidatos(struct TodosCandidatos *lista)
 {
@@ -953,6 +1038,7 @@ void menuCandidatos(struct TodosCandidatos *lista)
         printf("3. eliminar un candidato\n");
         printf("4. Modificar un candidato\n");
         printf("5. Mostrar la informacion de los candidatos\n");
+        printf("6. Ordenar los candidatos\n");
         printf("0. Salir del menú candidatos\n");
         
         scanf("%d", &numero);
@@ -998,6 +1084,11 @@ void menuCandidatos(struct TodosCandidatos *lista)
                 
             case 5:
                 mostrarCandidato(lista);
+                break;
+                
+                
+            case 6:
+                ordenarCandidatosBurbuja(lista);
                 break;
                 
             case 0:
@@ -1369,6 +1460,7 @@ void menuVotantes(struct Mesa *mesa)
 
 int main()
 {
+    struct Eleccion *eleccionActual;
     struct SistemaVotacion *sistema;
     int opcion;
     
@@ -1386,6 +1478,7 @@ int main()
         printf("2. Candidato\n");
         printf("3. Mesa\n");
         printf("4. Votante\n");
+        printf("5. Reportes y estadisticas\n");
         printf("0. Salir\n");
         printf("Seleccione una opcion: ");
 
@@ -1438,6 +1531,23 @@ int main()
                     menuVotantes(sistema->elecciones->datosEleccion->listaMesas->datosMesa);
                 }
                 break;
+                
+            case 5:
+            
+                if (sistema->elecciones == NULL)
+                {
+                    printf("ERROR: Primero debe crear una elección.\n");
+                }
+                else
+                {
+                    eleccionActual = sistema->elecciones->datosEleccion;
+                
+                    printf("\n--- REPORTES ---\n");
+                    calcularParticipacion(eleccionActual);
+                    contarVotosPorCandidato(eleccionActual);
+                    printf("----------------\n");
+                }
+            break;
             
             case 0:
                 printf("Saliendo del sistema...\n");
