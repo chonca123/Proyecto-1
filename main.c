@@ -129,7 +129,7 @@ void liberarArbolVotantes(struct NodoVotante *raiz);
 void menuVotantes(struct Mesa *mesa);
 
 
-//FUNCIONES SISTEMA INICIAL
+//FUNCIONES SISTEMA INICIAL Y DE FUNCIONALIDAD
 
 struct SistemaVotacion *nuevoSistema() 
 {
@@ -263,7 +263,6 @@ void calcularParticipacion(struct Eleccion *eleccion)
     printf("================================\n");
 }
 
-// FUNCIÓN EXTRA 2: CONTEO DE VOTOS
 void contarVotosPorCandidato(struct Eleccion *eleccion)
 {
     int i;
@@ -283,7 +282,7 @@ void contarVotosPorCandidato(struct Eleccion *eleccion)
     {
         if (lista->Candidatos[i] != NULL)
         {
-            printf("%-20s | %-15s | %d\n", lista->Candidatos[i]->NombreCandidato, lista->Candidatos[i]->PartidoPolitico, lista->Candidatos[i]->votos); // Muestra el conteo de votos
+            printf("%-20s | %-15s | %d\n", lista->Candidatos[i]->NombreCandidato, lista->Candidatos[i]->PartidoPolitico, lista->Candidatos[i]->votos);
         }
     }
     printf("==================================================\n");
@@ -306,10 +305,6 @@ void listarElecciones(struct SistemaVotacion *sistema)
         rec = rec->sig;
     }
 }
-
-
-
-
 
 //FUNCIONES DE MESA 
 
@@ -428,8 +423,6 @@ void agregarMesa(struct Eleccion *eleccion, int numeroPadron)
 
     printf("Mesa agregada correctamente.\n");
 }
-
-
 
 struct Mesa *buscarMesa(struct Eleccion *eleccion, int numeroBuscado)
 {
@@ -654,7 +647,7 @@ void menuMesa(struct Eleccion *eleccion)
 
 
 
-
+//FUNCION INICIAL DE INGRESO DE DATOS
 
 void ingresoDeDatos(struct SistemaVotacion *sistema) 
 {
@@ -674,7 +667,7 @@ void ingresoDeDatos(struct SistemaVotacion *sistema)
 
     printf("Ingrese la fecha del registro de la candidatura (dia mes anio):\n");
     scanf("%d %d %d", &sistema->registroCandidaturas.dia, &sistema->registroCandidaturas.mes, &sistema->registroCandidaturas.anio);
-    getchar();  // limpia el ENTER
+    getchar();
 
     printf("Ingrese fecha de inicio de campaña (dia mes anio):\n");
     scanf("%d %d %d", &sistema->FechaInicioCampana.dia, &sistema->FechaInicioCampana.mes, &sistema->FechaInicioCampana.anio);
@@ -689,7 +682,7 @@ void ingresoDeDatos(struct SistemaVotacion *sistema)
 
 
 
-
+//FUNCION DEL INGRESO DE DATOS DE CANDIDATOS
 
 void ingresoDeDatosCandidatos(struct Candidato *espacio)
 {
@@ -995,6 +988,8 @@ void mostrarCandidato(struct TodosCandidatos *lista)
     }
 }
 
+//FUNCION OPCIONAL DE ORDENAMIENTO BURBUJA
+
 void ordenarCandidatosBurbuja(struct TodosCandidatos *lista)
 {
     int i, j;
@@ -1250,8 +1245,6 @@ int buscarVotante(struct NodoVotante *raiz, char *rut)
     }
 }
 
-
-// Nueva función para encontrar el sucesor
 struct NodoVotante* minimoNodo(struct NodoVotante* nodo)
 {
     struct NodoVotante* actual;
@@ -1285,8 +1278,6 @@ struct NodoVotante* eliminarVotante(struct NodoVotante *raiz, char *rut)
     }
     else
     {
-        // Encontrado
-
         // Caso 1: Nodo hoja o con 1 hijo
         if (raiz->izq == NULL)
         {
@@ -1309,10 +1300,8 @@ struct NodoVotante* eliminarVotante(struct NodoVotante *raiz, char *rut)
             return temp;
         }
 
-        // Caso 2: dos hijos → reemplazar por el sucesor
         temp = minimoNodo(raiz->der);
 
-        // copiar los datos del sucesor
         strcpy(raiz->datosVotante->rut, temp->datosVotante->rut);
         raiz->datosVotante->edad = temp->datosVotante->edad;
 
@@ -1325,7 +1314,6 @@ struct NodoVotante* eliminarVotante(struct NodoVotante *raiz, char *rut)
 
         strcpy(raiz->datosVotante->Nacionalidad, temp->datosVotante->Nacionalidad);
 
-        // eliminar sucesor en subárbol derecho
         raiz->der = eliminarVotante(raiz->der, temp->datosVotante->rut);
     }
 
@@ -1354,7 +1342,6 @@ void modificarVotante(struct NodoVotante *raiz, char *rut)
     }
     else
     {
-        // Encontrado
         printf("Ingrese nuevo nombre: ");
         fgets(aux, sizeof(aux), stdin);
         aux[strcspn(aux, "\n")] = '\0';
@@ -1416,13 +1403,13 @@ void menuVotantes(struct Mesa *mesa)
         switch (numero)
         {
             case 1:
-                agregarVotante(&(mesa->votantes));   //doble puntero
+                agregarVotante(&(mesa->votantes));   
                 break;
             
             case 2:
                 printf("Ingrese el rut del votante buscado\n");
                 fgets(aux, sizeof(aux), stdin);
-                aux[strcspn(aux, "\n")] = '\0';    //elimina el salto de linea
+                aux[strcspn(aux, "\n")] = '\0';   
                 buscarVotante(mesa->votantes, aux);
                 break;
             
