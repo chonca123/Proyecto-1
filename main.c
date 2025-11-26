@@ -81,7 +81,7 @@ struct Votante
     char paisResidencia[25];
 };
 
-// Funciones Elección
+/* Funciones Elección */
 struct NodoEleccion *nuevoNodoEleccion();
 struct Eleccion *crearEleccion();
 void agregarNodoEleccion(struct SistemaVotacion *sistema, struct NodoEleccion *nodo);
@@ -90,7 +90,7 @@ void listarElecciones(struct SistemaVotacion *sistema);
 void calcularParticipacion(struct Eleccion *eleccion);
 void contarVotosPorCandidato(struct Eleccion *eleccion);
 
-// Funciones Candidato
+/* Funciones Candidato  */
 struct TodosCandidatos *crearArregloCandidatos();
 struct Candidato *crearCandidato();
 void arregloFijo(struct TodosCandidatos *arreglo, int tamano);
@@ -104,7 +104,7 @@ void ordenarCandidatosBurbuja(struct TodosCandidatos *lista);
 void menuCandidatos(struct TodosCandidatos *lista);
 void ingresoDeDatosCandidatos(struct Candidato *espacio);
 
-// Funciones Mesa
+/* Funciones Mesa */
 struct NodoMesa *crearNodoMesa();
 struct Mesa *crearMesa();
 void agregarNodoMesa(struct Eleccion *eleccion, struct NodoMesa *nuevo);
@@ -114,7 +114,7 @@ void listarMesas(struct Eleccion *eleccion);
 int eliminarMesa(struct Eleccion *eleccion, int numeroBuscado);
 void menuMesa(struct Eleccion *eleccion);
 
-// Funciones Votante
+/* Funciones Votante */
 struct NodoVotante *nuevoNodoVotante();
 struct Votante *crearVotante();
 struct NodoVotante* minimoNodo(struct NodoVotante* nodo); 
@@ -129,7 +129,7 @@ void liberarArbolVotantes(struct NodoVotante *raiz);
 void menuVotantes(struct Mesa *mesa);
 
 
-//FUNCIONES SISTEMA INICIAL Y DE FUNCIONALIDAD
+/*FUNCIONES SISTEMA INICIAL Y DE FUNCIONALIDAD*/
 
 struct SistemaVotacion *nuevoSistema() 
 {
@@ -306,7 +306,7 @@ void listarElecciones(struct SistemaVotacion *sistema)
     }
 }
 
-//FUNCIONES DE MESA 
+/*FUNCIONES DE MESA*/ 
 
 struct NodoMesa *crearNodoMesa()
 {
@@ -647,7 +647,7 @@ void menuMesa(struct Eleccion *eleccion)
 
 
 
-//FUNCION INICIAL DE INGRESO DE DATOS
+/*FUNCION INICIAL DE INGRESO DE DATOS */
 
 void ingresoDeDatos(struct SistemaVotacion *sistema) 
 {
@@ -682,7 +682,7 @@ void ingresoDeDatos(struct SistemaVotacion *sistema)
 
 
 
-//FUNCION DEL INGRESO DE DATOS DE CANDIDATOS
+/*FUNCION DEL INGRESO DE DATOS DE CANDIDATOS */
 
 void ingresoDeDatosCandidatos(struct Candidato *espacio)
 {
@@ -754,7 +754,7 @@ void menuElecciones(struct SistemaVotacion *sistema)
 
 
 
-//FUNCIONES CANDIDATO
+/*FUNCIONES CANDIDATO*/
 
 struct TodosCandidatos *crearArregloCandidatos()
 {
@@ -988,7 +988,7 @@ void mostrarCandidato(struct TodosCandidatos *lista)
     }
 }
 
-//FUNCION OPCIONAL DE ORDENAMIENTO BURBUJA
+/*FUNCION OPCIONAL DE ORDENAMIENTO BURBUJA*/
 
 void ordenarCandidatosBurbuja(struct TodosCandidatos *lista)
 {
@@ -1097,7 +1097,7 @@ void menuCandidatos(struct TodosCandidatos *lista)
     } while (numero != 0);
 }
 
-//FUNCIONES VOTANTES
+/*FUNCIONES VOTANTES*/
 
 struct NodoVotante *nuevoNodoVotante()
 {
@@ -1267,7 +1267,6 @@ struct NodoVotante* eliminarVotante(struct NodoVotante *raiz, char *rut)
         return NULL;
     }
 
-    // Buscar por ABB
     if (strcmp(rut, raiz->datosVotante->rut) < 0)
     {
         raiz->izq = eliminarVotante(raiz->izq, rut);
@@ -1278,7 +1277,6 @@ struct NodoVotante* eliminarVotante(struct NodoVotante *raiz, char *rut)
     }
     else
     {
-        // Caso 1: Nodo hoja o con 1 hijo
         if (raiz->izq == NULL)
         {
             temp = raiz->der;
